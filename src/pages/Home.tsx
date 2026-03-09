@@ -315,15 +315,22 @@ export const Home = () => {
                     }}
                     className="min-w-[85vw] md:min-w-[800px] aspect-[16/9] relative group overflow-hidden border border-white/5 bg-white/5"
                   >
-                    <img 
-                      src={item.image ?? item.url ?? portfolioFallbackImage} 
-                      alt={item.title} 
-                      className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105"
-                      referrerPolicy="no-referrer"
-                      onError={(event) => {
-                        event.currentTarget.src = portfolioFallbackImage;
-                      }}
-                    />
+                    <div className="absolute inset-0">
+                      <img
+                        src={portfolioFallbackImage}
+                        alt={`${item.title} placeholder`}
+                        className="w-full h-full object-cover opacity-35"
+                      />
+                      <img 
+                        src={item.image ?? item.url ?? portfolioFallbackImage} 
+                        alt={item.title} 
+                        className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105"
+                        referrerPolicy="no-referrer"
+                        onError={(event) => {
+                          event.currentTarget.style.display = 'none';
+                        }}
+                      />
+                    </div>
                     
                     {/* Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-700" />
