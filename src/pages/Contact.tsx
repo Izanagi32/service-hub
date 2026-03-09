@@ -32,9 +32,9 @@ export const Contact = () => {
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!contactFormData.email.trim()) {
-      newErrors.email = "Будь ласка, введіть email";
+      newErrors.email = "Будь ласка, введіть електронну пошту";
     } else if (!emailRegex.test(contactFormData.email)) {
-      newErrors.email = "Невірний формат email";
+      newErrors.email = "Невірний формат електронної пошти";
     }
 
     if (!contactFormData.message.trim()) {
@@ -67,7 +67,7 @@ export const Contact = () => {
         setContactFormData({ name: "", email: "", message: "" });
       }, 5000);
     } catch (error) {
-      setSubmitError(error instanceof Error ? error.message : "Failed to send message. Please try again.");
+      setSubmitError(error instanceof Error ? error.message : "Не вдалося надіслати повідомлення. Спробуйте ще раз.");
     } finally {
       setIsContactSubmitting(false);
     }
@@ -117,7 +117,7 @@ export const Contact = () => {
                   content: `${BUSINESS_INFO.addressLine}, ${BUSINESS_INFO.city}, ${BUSINESS_INFO.country}`,
                 },
                 { icon: <Phone className="w-8 h-8" />, title: "Телефон", content: BUSINESS_INFO.phoneDisplay },
-                { icon: <Mail className="w-8 h-8" />, title: "Email", content: BUSINESS_INFO.email },
+                { icon: <Mail className="w-8 h-8" />, title: "Електронна пошта", content: BUSINESS_INFO.email },
                 { icon: <Clock className="w-8 h-8" />, title: "Графік роботи", content: BUSINESS_INFO.workingHoursFull },
               ].map((item, i) => (
                 <div key={i} className="flex items-start gap-8 group">
@@ -164,7 +164,7 @@ export const Contact = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500">Ваш Email</label>
+                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500">Ваша електронна пошта</label>
                 <input
                   type="email"
                   value={contactFormData.email}

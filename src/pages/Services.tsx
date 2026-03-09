@@ -103,7 +103,7 @@ export const Services = ({ openModal }: ServicesProps) => {
         schema={{
           "@context": "https://schema.org",
           "@type": "Service",
-          "serviceType": "Car Detailing and Maintenance",
+          "serviceType": "Детейлінг і догляд за авто",
           "provider": {
             "@type": "AutoBodyShop",
             "name": "ServiceHub",
@@ -115,7 +115,7 @@ export const Services = ({ openModal }: ServicesProps) => {
           },
           "hasOfferCatalog": {
             "@type": "OfferCatalog",
-            "name": "Detailing Services",
+            "name": "Каталог послуг",
             "itemListElement": services.map(s => ({
               "@type": "Offer",
               "itemOffered": {

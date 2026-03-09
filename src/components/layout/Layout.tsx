@@ -52,7 +52,7 @@ export const Layout = ({ children, openModal }: LayoutProps) => {
               </div>
               <div className="leading-none">
                 <div className="text-[14px] tracking-[0.22em] uppercase text-gray-200 font-semibold">Service Hub</div>
-                <div className="text-[10px] tracking-[0.22em] uppercase text-gray-500 mt-1.5">Premium Auto Care</div>
+                <div className="text-[10px] tracking-[0.22em] uppercase text-gray-500 mt-1.5">Преміальний догляд за авто</div>
               </div>
             </Link>
 
@@ -139,7 +139,7 @@ export const Layout = ({ children, openModal }: LayoutProps) => {
                 </div>
                 <div>
                   <div className="text-[13px] tracking-[0.2em] uppercase font-semibold text-white">Service Hub</div>
-                  <div className="text-[10px] tracking-[0.2em] uppercase text-[#d5b57a] mt-1">Premium Auto Care Studio</div>
+                  <div className="text-[10px] tracking-[0.2em] uppercase text-[#d5b57a] mt-1">Преміальний догляд за авто Studio</div>
                 </div>
               </div>
               <p className="text-gray-500 max-w-sm mb-8 leading-relaxed">

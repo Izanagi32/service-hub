@@ -30,7 +30,7 @@ const postJson = async (url: string, payload: BookingPayload | ContactPayload): 
   });
 
   if (!response.ok) {
-    throw new Error(`Webhook request failed with status ${response.status}`);
+    throw new Error(`Помилка надсилання запиту, код статусу ${response.status}`);
   }
 };
 

@@ -75,7 +75,7 @@ export default function App() {
         setFormData({ name: "", phone: "", service: services[0].title });
       }, 3000);
     } catch (error) {
-      setSubmitError(error instanceof Error ? error.message : "Failed to send request. Please try again.");
+      setSubmitError(error instanceof Error ? error.message : "Не вдалося надіслати запит. Спробуйте ще раз.");
     } finally {
       setIsSubmitting(false);
     }

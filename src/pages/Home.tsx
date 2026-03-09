@@ -126,7 +126,7 @@ export const Home = () => {
           <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent z-20" />
           <img 
             src="https://images.unsplash.com/photo-1617788138017-80ad40651399?q=80&w=2940&auto=format&fit=crop" 
-            alt="Luxury Dark Car" 
+            alt="Преміальний автомобіль" 
             className="w-full h-full object-cover scale-105"
           />
         </div>
@@ -139,13 +139,13 @@ export const Home = () => {
           >
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 backdrop-blur-md mb-8">
               <Star className="w-3 h-3 text-blue-400 fill-blue-400" />
-              <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-gray-300">Premium Car Care</span>
+              <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-gray-300">Преміальний догляд за авто</span>
             </div>
             
             <h1 className="text-5xl md:text-8xl font-bold font-display mb-8 tracking-tighter text-white leading-[0.9]">
-              PERFECTION <br />
+              ДОСКОНАЛІСТЬ <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500">
-                IN DETAILS
+                У ДЕТАЛЯХ
               </span>
             </h1>
             
@@ -179,7 +179,7 @@ export const Home = () => {
           transition={{ delay: 1.5, duration: 1 }}
           className="absolute bottom-12 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-4"
         >
-          <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-500">Scroll</span>
+          <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-500">Гортай</span>
           <div className="w-px h-12 bg-gradient-to-b from-blue-600 to-transparent" />
         </motion.div>
       </section>
@@ -379,7 +379,7 @@ export const Home = () => {
                 </div>
                 <div className="text-sm">
                   <div className="text-white font-bold">4.9 / 5.0</div>
-                  <div className="text-gray-500 text-xs uppercase tracking-widest">Google Reviews</div>
+                  <div className="text-gray-500 text-xs uppercase tracking-widest">Відгуки Google</div>
                 </div>
               </div>
             </div>
@@ -446,7 +446,7 @@ export const Home = () => {
       <section className="py-32 bg-[#080808]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div {...fadeInUp} className="text-center mb-20">
-            <span className="text-blue-500 text-xs font-bold tracking-[0.2em] uppercase mb-4 block">FAQ</span>
+            <span className="text-blue-500 text-xs font-bold tracking-[0.2em] uppercase mb-4 block">Питання та відповіді</span>
             <h2 className="text-4xl md:text-5xl font-bold font-display text-white">Часті Запитання</h2>
           </motion.div>
 
