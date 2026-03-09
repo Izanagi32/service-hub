@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://servicehub.kyiv.ua/sitemap.xml

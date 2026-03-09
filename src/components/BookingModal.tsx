@@ -14,6 +14,7 @@ interface BookingModalProps {
   errors: Record<string, string>;
   isSubmitting: boolean;
   isSuccess: boolean;
+  submitError?: string;
   handleBookingSubmit: (e: FormEvent) => void;
 }
 
@@ -28,6 +29,7 @@ export const BookingModal = ({
   errors,
   isSubmitting,
   isSuccess,
+  submitError,
   handleBookingSubmit,
 }: BookingModalProps) => {
   return (
@@ -147,6 +149,10 @@ export const BookingModal = ({
                       </>
                     )}
                   </button>
+
+                  {submitError && (
+                    <p className="text-red-400 text-xs leading-relaxed">{submitError}</p>
+                  )}
                 </form>
               )}
             </div>
@@ -156,3 +162,6 @@ export const BookingModal = ({
     </AnimatePresence>
   );
 };
+
+
+

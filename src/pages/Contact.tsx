@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle2 } from "lucide-react";
 import { SEO } from "../components/SEO";
 import { BUSINESS_INFO } from "../siteContent";
+import { submitContactRequest } from "../lib/submissions";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 30 },
@@ -20,6 +21,7 @@ export const Contact = () => {
   const [contactErrors, setContactErrors] = useState<Record<string, string>>({});
   const [isContactSubmitting, setIsContactSubmitting] = useState(false);
   const [isContactSuccess, setIsContactSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   const validateContactForm = () => {
     const newErrors: Record<string, string> = {};
@@ -47,15 +49,27 @@ export const Contact = () => {
 
   const handleContactSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (validateContactForm()) {
+    if (!validateContactForm()) {
+      return;
+    }
+
+    try {
+      setSubmitError("");
       setIsContactSubmitting(true);
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      setIsContactSubmitting(false);
+      await submitContactRequest(
+        contactFormData.name.trim(),
+        contactFormData.email.trim(),
+        contactFormData.message.trim(),
+      );
       setIsContactSuccess(true);
       setTimeout(() => {
         setIsContactSuccess(false);
         setContactFormData({ name: "", email: "", message: "" });
       }, 5000);
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : "Failed to send message. Please try again.");
+    } finally {
+      setIsContactSubmitting(false);
     }
   };
 
@@ -186,6 +200,10 @@ export const Contact = () => {
                   </>
                 )}
               </button>
+
+              {submitError && (
+                <p className="text-red-400 text-xs leading-relaxed">{submitError}</p>
+              )}
             </form>
 
             <AnimatePresence>
@@ -216,3 +234,7 @@ export const Contact = () => {
     </div>
   );
 };
+
+
+
+

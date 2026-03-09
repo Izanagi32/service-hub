@@ -9,7 +9,9 @@ import { Contact } from "./pages/Contact";
 import { PrivacyPolicy } from "./pages/PrivacyPolicy";
 import { TermsOfService } from "./pages/TermsOfService";
 import { BookingModal } from "./components/BookingModal";
+import { Analytics } from "./components/Analytics";
 import { services } from "./constants";
+import { submitBookingRequest } from "./lib/submissions";
 
 export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -22,9 +24,16 @@ export default function App() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  const openModal = () => {
+    setSubmitError("");
+    setIsModalOpen(true);
+  };
+  const closeModal = () => {
+    setSubmitError("");
+    setIsModalOpen(false);
+  };
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -50,21 +59,32 @@ export default function App() {
 
   const handleBookingSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
+    if (!validateForm()) {
+      return;
+    }
+
+    try {
+      setSubmitError("");
       setIsSubmitting(true);
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      setIsSubmitting(false);
+      await submitBookingRequest(formData.name.trim(), formData.phone.trim(), formData.service);
       setIsSuccess(true);
+
       setTimeout(() => {
         setIsSuccess(false);
         closeModal();
         setFormData({ name: "", phone: "", service: services[0].title });
       }, 3000);
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : "Failed to send request. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <Router basename={import.meta.env.BASE_URL}>
+      <Analytics />
+
       <Layout openModal={openModal}>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -88,8 +108,13 @@ export default function App() {
         errors={errors}
         isSubmitting={isSubmitting}
         isSuccess={isSuccess}
+        submitError={submitError}
         handleBookingSubmit={handleBookingSubmit}
       />
     </Router>
   );
 }
+
+
+
+

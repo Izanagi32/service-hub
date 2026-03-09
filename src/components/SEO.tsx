@@ -1,5 +1,6 @@
 import { Helmet } from "react-helmet-async";
-import { env } from "../env";
+import { useLocation } from "react-router-dom";
+import { absoluteSiteUrl, env } from "../env";
 
 interface SEOProps {
   title: string;
@@ -16,27 +17,29 @@ export const SEO = ({
   description,
   keywords,
   image,
-  url = env.siteUrl,
+  url,
   type = "website",
   schema,
 }: SEOProps) => {
+  const location = useLocation();
   const siteTitle = "ServiceHub | Преміальний детейлінг та сервіс";
   const fullTitle = `${title} | ${siteTitle}`;
-  const ogImage = image ?? new URL(`${import.meta.env.BASE_URL}logo.png`, `${env.siteUrl}/`).toString();
+  const canonicalUrl = url ? absoluteSiteUrl(url) : absoluteSiteUrl(location.pathname);
+  const ogImage = image ? absoluteSiteUrl(image) : absoluteSiteUrl(`${import.meta.env.BASE_URL}logo.png`);
 
   return (
     <Helmet>
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
       {keywords && <meta name="keywords" content={keywords} />}
-      <link rel="canonical" href={url} />
+      <link rel="canonical" href={canonicalUrl} />
       <meta name="robots" content="index, follow" />
 
       <meta property="og:type" content={type} />
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={ogImage} />
-      <meta property="og:url" content={url} />
+      <meta property="og:url" content={canonicalUrl} />
       <meta property="og:site_name" content="ServiceHub" />
 
       <meta name="twitter:card" content="summary_large_image" />
