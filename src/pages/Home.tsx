@@ -25,6 +25,7 @@ export const Home = () => {
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [dragX, setDragX] = useState(0);
   const trackRef = useRef<HTMLDivElement>(null);
+  const portfolioFallbackImage = '/logo.png';
 
   const getCardWidth = () => {
     if (trackRef.current && trackRef.current.firstElementChild) {
@@ -315,10 +316,13 @@ export const Home = () => {
                     className="min-w-[85vw] md:min-w-[800px] aspect-[16/9] relative group overflow-hidden border border-white/5 bg-white/5"
                   >
                     <img 
-                      src={item.url} 
+                      src={item.image ?? item.url ?? portfolioFallbackImage} 
                       alt={item.title} 
                       className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105"
                       referrerPolicy="no-referrer"
+                      onError={(event) => {
+                        event.currentTarget.src = portfolioFallbackImage;
+                      }}
                     />
                     
                     {/* Overlay */}

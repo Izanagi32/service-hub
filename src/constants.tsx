@@ -105,7 +105,14 @@ export const processSteps = [
   },
 ];
 
-export const portfolioItems = [
+export interface PortfolioItem {
+  title: string;
+  category: string;
+  image?: string;
+  url?: string;
+}
+
+export const portfolioItems: PortfolioItem[] = [
   { url: "https://images.unsplash.com/photo-1503376763036-066120622c74?q=80&w=1200&auto=format&fit=crop", title: "Porsche 911 GT3 RS", category: "Detailing" },
   { url: "https://images.unsplash.com/photo-1583121274602-3e2820c69888?q=80&w=1200&auto=format&fit=crop", title: "Ferrari 488 Pista", category: "Ceramic" },
   { url: "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?q=80&w=1200&auto=format&fit=crop", title: "Ford Mustang Shelby", category: "Polishing" },
