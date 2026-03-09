@@ -22,7 +22,7 @@ export const SEO = ({
 }: SEOProps) => {
   const siteTitle = "ServiceHub | Преміальний детейлінг та сервіс";
   const fullTitle = `${title} | ${siteTitle}`;
-  const ogImage = image ?? `${env.siteUrl}/logo.png`;
+  const ogImage = image ?? new URL(`${import.meta.env.BASE_URL}logo.png`, `${env.siteUrl}/`).toString();
 
   return (
     <Helmet>

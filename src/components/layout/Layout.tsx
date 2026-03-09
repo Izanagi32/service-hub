@@ -10,6 +10,7 @@ interface LayoutProps {
 }
 
 export const Layout = ({ children, openModal }: LayoutProps) => {
+  const logoSrc = `${import.meta.env.BASE_URL}logo.png`;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
@@ -47,7 +48,7 @@ export const Layout = ({ children, openModal }: LayoutProps) => {
             <Link to="/" className="group inline-flex items-center gap-4 shrink-0">
               <div className="relative h-20 w-20 rounded-full border border-white/20 bg-[#0d1421] flex items-center justify-center overflow-hidden shadow-[0_6px_14px_rgba(0,0,0,0.45)]">
                 <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent" />
-                <img src="/logo.png" alt="ServiceHub" className="h-16 w-16 rounded-full object-cover group-hover:scale-105 transition-transform" />
+                <img src={logoSrc} alt="ServiceHub" className="h-16 w-16 rounded-full object-cover group-hover:scale-105 transition-transform" />
               </div>
               <div className="leading-none">
                 <div className="text-[14px] tracking-[0.22em] uppercase text-gray-200 font-semibold">Service Hub</div>
@@ -134,7 +135,7 @@ export const Layout = ({ children, openModal }: LayoutProps) => {
             <div className="col-span-1 md:col-span-2">
               <div className="inline-flex items-center gap-4 mb-8 rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3">
                 <div className="h-14 w-14 rounded-full border border-white/20 bg-[#0d1421] flex items-center justify-center overflow-hidden shadow-[0_6px_14px_rgba(0,0,0,0.45)]">
-                  <img src="/logo.png" alt="ServiceHub" className="h-11 w-11 rounded-full object-cover" />
+                  <img src={logoSrc} alt="ServiceHub" className="h-11 w-11 rounded-full object-cover" />
                 </div>
                 <div>
                   <div className="text-[13px] tracking-[0.2em] uppercase font-semibold text-white">Service Hub</div>
@@ -199,3 +200,5 @@ export const Layout = ({ children, openModal }: LayoutProps) => {
     </div>
   );
 };
+
+
