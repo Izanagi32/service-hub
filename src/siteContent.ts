@@ -1,0 +1,16 @@
+export const BUSINESS_INFO = {
+  brand: "ServiceHub",
+  legalName: "ServiceHub Detailing Studio",
+  siteUrl: "https://servicehub.kyiv.ua",
+  phoneDisplay: "+38 (099) 123 45 67",
+  phoneE164: "+380991234567",
+  email: "info@servicehub.kyiv.ua",
+  addressLine: "вул. Велика Васильківська, 100",
+  city: "Київ",
+  country: "Україна",
+  postalCode: "03150",
+  workingHoursShort: "Пн-Сб: 09:00 - 20:00",
+  workingHoursFull: "Пн-Сб: 09:00 - 20:00, Нд: за попереднім записом",
+  instagramUrl: "https://www.instagram.com/servicehub",
+  facebookUrl: "https://www.facebook.com/servicehub",
+} as const;
