@@ -64,7 +64,7 @@ export default function App() {
   };
 
   return (
-    <Router>
+    <Router basename={import.meta.env.BASE_URL}>
       <Layout openModal={openModal}>
         <Routes>
           <Route path="/" element={<Home />} />
