@@ -1,14 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
-import { 
-  CheckCircle2, 
+import { motion, AnimatePresence } from 'motion/react';
+import {
   ArrowRight,
   ShieldCheck,
   Sparkles,
   Gauge,
   ChevronLeft,
   ChevronRight,
-  Star,
   Play,
   X
 } from 'lucide-react';
@@ -23,7 +21,7 @@ const fadeInUp = {
 };
 
 interface ServicesProps {
-  openModal: () => void;
+  openModal: (serviceTitle?: string) => void;
 }
 
 export const Services = ({ openModal }: ServicesProps) => {
@@ -79,12 +77,15 @@ export const Services = ({ openModal }: ServicesProps) => {
   };
 
   useEffect(() => {
+    const initialTimer = window.setTimeout(() => updateCarousel(0), 100);
+    return () => window.clearTimeout(initialTimer);
+  }, []);
+
+  useEffect(() => {
     const handleResize = () => updateCarousel(activeIndex);
     window.addEventListener('resize', handleResize);
-    // Initial position
-    setTimeout(() => updateCarousel(0), 100);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [activeIndex]);
 
   // Auto-play
   useEffect(() => {
@@ -281,7 +282,7 @@ export const Services = ({ openModal }: ServicesProps) => {
                           </div>
 
                           <button 
-                            onClick={openModal}
+                            onClick={() => openModal(service.title)}
                             className="w-full py-5 bg-white text-black font-bold text-xs tracking-[0.3em] uppercase hover:bg-blue-600 hover:text-white transition-all flex items-center justify-center gap-4 group/btn"
                           >
                             Записатися <ArrowRight size={16} className="group-hover/btn:translate-x-2 transition-transform" />
@@ -465,5 +466,3 @@ export const Services = ({ openModal }: ServicesProps) => {
     </div>
   );
 };
-
-

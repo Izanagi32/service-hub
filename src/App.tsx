@@ -1,4 +1,4 @@
-import { useState, FormEvent } from "react";
+import { useEffect, useRef, useState, FormEvent } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Layout } from "./components/layout/Layout";
 import { Home } from "./pages/Home";
@@ -14,24 +14,40 @@ import { services } from "./constants";
 import { submitBookingRequest } from "./lib/submissions";
 
 export default function App() {
+  const defaultServiceTitle = services[0]?.title ?? "";
+  const successTimeoutRef = useRef<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedServiceTitle, setSelectedServiceTitle] = useState(services[0].title);
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
-    service: services[0].title,
+    service: defaultServiceTitle,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [submitError, setSubmitError] = useState("");
 
-  const openModal = () => {
+  useEffect(() => {
+    return () => {
+      if (successTimeoutRef.current !== null) {
+        window.clearTimeout(successTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const openModal = (serviceTitle?: string) => {
     setSubmitError("");
+    setErrors({});
+    setIsSuccess(false);
+    if (serviceTitle) {
+      setFormData((prev) => ({ ...prev, service: serviceTitle }));
+    }
     setIsModalOpen(true);
   };
+
   const closeModal = () => {
     setSubmitError("");
+    setErrors({});
     setIsModalOpen(false);
   };
 
@@ -69,10 +85,14 @@ export default function App() {
       await submitBookingRequest(formData.name.trim(), formData.phone.trim(), formData.service);
       setIsSuccess(true);
 
-      setTimeout(() => {
+      if (successTimeoutRef.current !== null) {
+        window.clearTimeout(successTimeoutRef.current);
+      }
+      successTimeoutRef.current = window.setTimeout(() => {
         setIsSuccess(false);
         closeModal();
-        setFormData({ name: "", phone: "", service: services[0].title });
+        setFormData({ name: "", phone: "", service: defaultServiceTitle });
+        successTimeoutRef.current = null;
       }, 3000);
     } catch (error) {
       setSubmitError(error instanceof Error ? error.message : "Не вдалося надіслати запит. Спробуйте ще раз.");
@@ -101,8 +121,6 @@ export default function App() {
         isOpen={isModalOpen}
         onClose={closeModal}
         services={services}
-        selectedServiceTitle={selectedServiceTitle}
-        setSelectedServiceTitle={setSelectedServiceTitle}
         formData={formData}
         setFormData={setFormData}
         errors={errors}
@@ -114,7 +132,3 @@ export default function App() {
     </Router>
   );
 }
-
-
-
-

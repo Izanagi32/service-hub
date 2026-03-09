@@ -6,7 +6,7 @@ import { BUSINESS_INFO } from "../../siteContent";
 
 interface LayoutProps {
   children: ReactNode;
-  openModal: () => void;
+  openModal: (serviceTitle?: string) => void;
 }
 
 export const Layout = ({ children, openModal }: LayoutProps) => {
@@ -77,14 +77,22 @@ export const Layout = ({ children, openModal }: LayoutProps) => {
 
             <div className="hidden md:flex items-center gap-3 shrink-0">
               <button
-                onClick={openModal}
+                type="button"
+                onClick={() => openModal()}
                 className="rounded-md border border-[#d5b57a]/35 bg-gradient-to-r from-[#1d2b42] to-[#23344f] hover:from-[#24354f] hover:to-[#2a3e5d] px-4 py-2 text-[11px] font-bold tracking-[0.16em] uppercase transition-all"
               >
                 Записатися
               </button>
             </div>
 
-            <button onClick={() => setIsMenuOpen((v) => !v)} className="md:hidden p-2 text-white/90 hover:text-white transition-colors">
+            <button
+              type="button"
+              onClick={() => setIsMenuOpen((v) => !v)}
+              aria-label={isMenuOpen ? "Закрити меню" : "Відкрити меню"}
+              aria-expanded={isMenuOpen}
+              aria-controls="mobile-main-menu"
+              className="md:hidden p-2 text-white/90 hover:text-white transition-colors"
+            >
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
@@ -95,6 +103,7 @@ export const Layout = ({ children, openModal }: LayoutProps) => {
         <AnimatePresence>
           {isMenuOpen && (
             <motion.div
+              id="mobile-main-menu"
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
@@ -113,6 +122,7 @@ export const Layout = ({ children, openModal }: LayoutProps) => {
                   </Link>
                 ))}
                 <button
+                  type="button"
                   onClick={() => {
                     openModal();
                     setIsMenuOpen(false);
@@ -147,10 +157,10 @@ export const Layout = ({ children, openModal }: LayoutProps) => {
                 Наша репутація - це якість робіт, прозора комунікація та увага до деталей.
               </p>
               <div className="flex gap-4">
-                <a href={BUSINESS_INFO.instagramUrl} target="_blank" rel="noreferrer" className="w-12 h-12 border border-white/10 flex items-center justify-center hover:bg-blue-600 hover:border-blue-600 transition-all group">
+                <a href={BUSINESS_INFO.instagramUrl} target="_blank" rel="noopener noreferrer" className="w-12 h-12 border border-white/10 flex items-center justify-center hover:bg-blue-600 hover:border-blue-600 transition-all group">
                   <Instagram className="w-5 h-5 text-gray-400 group-hover:text-white" />
                 </a>
-                <a href={BUSINESS_INFO.facebookUrl} target="_blank" rel="noreferrer" className="w-12 h-12 border border-white/10 flex items-center justify-center hover:bg-blue-600 hover:border-blue-600 transition-all group">
+                <a href={BUSINESS_INFO.facebookUrl} target="_blank" rel="noopener noreferrer" className="w-12 h-12 border border-white/10 flex items-center justify-center hover:bg-blue-600 hover:border-blue-600 transition-all group">
                   <Facebook className="w-5 h-5 text-gray-400 group-hover:text-white" />
                 </a>
               </div>
@@ -200,5 +210,3 @@ export const Layout = ({ children, openModal }: LayoutProps) => {
     </div>
   );
 };
-
-

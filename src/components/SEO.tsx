@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import { useLocation } from "react-router-dom";
-import { absoluteSiteUrl, env } from "../env";
+import { absoluteSiteUrl } from "../env";
 
 interface SEOProps {
   title: string;

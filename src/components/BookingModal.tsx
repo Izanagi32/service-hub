@@ -7,8 +7,6 @@ interface BookingModalProps {
   isOpen: boolean;
   onClose: () => void;
   services: Service[];
-  selectedServiceTitle: string;
-  setSelectedServiceTitle: (title: string) => void;
   formData: { name: string; phone: string; service: string };
   setFormData: Dispatch<SetStateAction<{ name: string; phone: string; service: string }>>;
   errors: Record<string, string>;
@@ -22,8 +20,6 @@ export const BookingModal = ({
   isOpen,
   onClose,
   services,
-  selectedServiceTitle,
-  setSelectedServiceTitle,
   formData,
   setFormData,
   errors,
@@ -49,8 +45,16 @@ export const BookingModal = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             className="relative w-full max-w-5xl bg-[#080808] border border-white/10 overflow-hidden flex flex-col md:flex-row"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="booking-modal-title"
           >
-            <button onClick={onClose} className="absolute top-6 right-6 text-white/50 hover:text-white z-20">
+            <button
+              onClick={onClose}
+              type="button"
+              aria-label="Закрити форму запису"
+              className="absolute top-6 right-6 text-white/50 hover:text-white z-20"
+            >
               <X size={24} />
             </button>
 
@@ -62,7 +66,9 @@ export const BookingModal = ({
                   <div className="w-12 h-12 bg-white/10 flex items-center justify-center mb-6">
                     <Sparkles className="text-white w-6 h-6" />
                   </div>
-                  <h2 className="text-3xl md:text-4xl font-bold font-display text-white mb-4">Запис на візит</h2>
+                  <h2 id="booking-modal-title" className="text-3xl md:text-4xl font-bold font-display text-white mb-4">
+                    Запис на візит
+                  </h2>
                   <p className="text-blue-100/70 text-sm leading-relaxed">
                     Оберіть послугу та залиште контакти. Наш менеджер зв'яжеться з вами протягом 15 хвилин для підтвердження.
                   </p>
@@ -95,11 +101,11 @@ export const BookingModal = ({
               ) : (
                 <form onSubmit={handleBookingSubmit} className="space-y-8">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500">Послуга</label>
+                    <label htmlFor="booking-service" className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500">Послуга</label>
                     <select
-                      value={selectedServiceTitle}
+                      id="booking-service"
+                      value={formData.service}
                       onChange={(e) => {
-                        setSelectedServiceTitle(e.target.value);
                         setFormData({ ...formData, service: e.target.value });
                       }}
                       className="w-full bg-white/5 border border-white/10 p-4 text-white text-sm focus:outline-none focus:border-blue-500 appearance-none cursor-pointer"
@@ -113,9 +119,14 @@ export const BookingModal = ({
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500">Ваше ім'я</label>
+                    <label htmlFor="booking-name" className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500">Ваше ім'я</label>
                     <input
+                      id="booking-name"
+                      name="name"
                       type="text"
+                      autoComplete="name"
+                      required
+                      aria-invalid={Boolean(errors.name)}
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       className={`w-full bg-transparent border-b ${errors.name ? "border-red-500" : "border-white/10"} py-4 text-white focus:outline-none focus:border-blue-500 transition-colors placeholder:text-gray-800`}
@@ -125,9 +136,14 @@ export const BookingModal = ({
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500">Телефон</label>
+                    <label htmlFor="booking-phone" className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500">Телефон</label>
                     <input
+                      id="booking-phone"
+                      name="phone"
                       type="tel"
+                      autoComplete="tel"
+                      required
+                      aria-invalid={Boolean(errors.phone)}
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       className={`w-full bg-transparent border-b ${errors.phone ? "border-red-500" : "border-white/10"} py-4 text-white focus:outline-none focus:border-blue-500 transition-colors placeholder:text-gray-800`}
@@ -162,6 +178,3 @@ export const BookingModal = ({
     </AnimatePresence>
   );
 };
-
-
-

@@ -152,9 +152,14 @@ export const Contact = () => {
 
             <form onSubmit={handleContactSubmit} className="space-y-8">
               <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500">Ваше ім'я</label>
+                <label htmlFor="contact-name" className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500">Ваше ім'я</label>
                 <input
+                  id="contact-name"
+                  name="name"
                   type="text"
+                  autoComplete="name"
+                  required
+                  aria-invalid={Boolean(contactErrors.name)}
                   value={contactFormData.name}
                   onChange={(e) => setContactFormData({ ...contactFormData, name: e.target.value })}
                   className={`w-full bg-transparent border-b ${contactErrors.name ? "border-red-500" : "border-white/10"} py-4 text-white focus:outline-none focus:border-blue-500 transition-colors placeholder:text-gray-800`}
@@ -164,9 +169,14 @@ export const Contact = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500">Ваша електронна пошта</label>
+                <label htmlFor="contact-email" className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500">Ваша електронна пошта</label>
                 <input
+                  id="contact-email"
+                  name="email"
                   type="email"
+                  autoComplete="email"
+                  required
+                  aria-invalid={Boolean(contactErrors.email)}
                   value={contactFormData.email}
                   onChange={(e) => setContactFormData({ ...contactFormData, email: e.target.value })}
                   className={`w-full bg-transparent border-b ${contactErrors.email ? "border-red-500" : "border-white/10"} py-4 text-white focus:outline-none focus:border-blue-500 transition-colors placeholder:text-gray-800`}
@@ -176,9 +186,13 @@ export const Contact = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500">Повідомлення</label>
+                <label htmlFor="contact-message" className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500">Повідомлення</label>
                 <textarea
+                  id="contact-message"
+                  name="message"
                   rows={4}
+                  required
+                  aria-invalid={Boolean(contactErrors.message)}
                   value={contactFormData.message}
                   onChange={(e) => setContactFormData({ ...contactFormData, message: e.target.value })}
                   className={`w-full bg-transparent border-b ${contactErrors.message ? "border-red-500" : "border-white/10"} py-4 text-white focus:outline-none focus:border-blue-500 transition-colors placeholder:text-gray-800 resize-none`}
@@ -220,6 +234,7 @@ export const Contact = () => {
                   <h3 className="text-3xl font-bold font-display text-white mb-4">Дякуємо!</h3>
                   <p className="text-gray-500 text-sm leading-relaxed">Ваше повідомлення відправлено. Ми зв'яжемося з вами найближчим часом.</p>
                   <button
+                    type="button"
                     onClick={() => setIsContactSuccess(false)}
                     className="mt-12 text-blue-500 text-[10px] font-bold uppercase tracking-[0.3em] hover:text-white transition-colors"
                   >
@@ -234,7 +249,3 @@ export const Contact = () => {
     </div>
   );
 };
-
-
-
-
