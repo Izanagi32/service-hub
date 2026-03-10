@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState, SyntheticEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   ArrowRight,
@@ -28,11 +28,51 @@ export const Services = ({ openModal }: ServicesProps) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
 
-  const normalizedIndex = ((activeIndex % services.length) + services.length) % services.length;
-  const activeService = services[normalizedIndex] ?? services[0];
+  const servicesCount = services.length;
+  const normalizedIndex = servicesCount > 0 ? ((activeIndex % servicesCount) + servicesCount) % servicesCount : 0;
+  const activeService = services[normalizedIndex];
+  const fallbackLogo = `${import.meta.env.BASE_URL}logo.png`;
+
+  const allServiceImages = useMemo(
+    () => Array.from(new Set(services.map((service) => service.image).filter(Boolean))),
+    [],
+  );
+
+  const getImageCandidates = (primaryImage: string | undefined, index: number): string[] => {
+    const adjacentImage = servicesCount > 0 ? services[(index + 1) % servicesCount]?.image : undefined;
+
+    return Array.from(
+      new Set([primaryImage, adjacentImage, ...allServiceImages, fallbackLogo].filter(Boolean) as string[]),
+    );
+  };
+
+  const handleImageError = (event: SyntheticEvent<HTMLImageElement>) => {
+    const target = event.currentTarget;
+    const chain = (target.dataset.fallbackChain ?? '')
+      .split('||')
+      .map((src) => src.trim())
+      .filter(Boolean);
+
+    const nextSrc = chain.shift();
+    if (nextSrc) {
+      target.dataset.fallbackChain = chain.join('||');
+      target.src = nextSrc;
+      return;
+    }
+
+    if (target.dataset.finalFallbackApplied === 'true') {
+      return;
+    }
+
+    target.dataset.finalFallbackApplied = 'true';
+    target.src = fallbackLogo;
+  };
 
   const updateCarousel = (index: number) => {
-    setActiveIndex(((index % services.length) + services.length) % services.length);
+    if (servicesCount === 0) {
+      return;
+    }
+    setActiveIndex(((index % servicesCount) + servicesCount) % servicesCount);
   };
 
   const scroll = (direction: 'left' | 'right') => {
@@ -40,13 +80,37 @@ export const Services = ({ openModal }: ServicesProps) => {
     updateCarousel(nextIndex);
   };
 
+  const handleSpotlightDragEnd = (_: any, info: any) => {
+    const threshold = 60;
+    if (info.offset.x < -threshold || info.velocity.x < -500) {
+      scroll('right');
+      return;
+    }
+
+    if (info.offset.x > threshold || info.velocity.x > 500) {
+      scroll('left');
+    }
+  };
+
   useEffect(() => {
+    if (servicesCount <= 1) {
+      return;
+    }
+
     const timer = window.setInterval(() => {
       updateCarousel(normalizedIndex + 1);
     }, 6500);
 
     return () => window.clearInterval(timer);
-  }, [normalizedIndex]);
+  }, [normalizedIndex, servicesCount]);
+
+  if (!activeService) {
+    return null;
+  }
+
+  const activeImageCandidates = getImageCandidates(activeService.image, normalizedIndex);
+  const activeImageSrc = activeImageCandidates[0] ?? fallbackLogo;
+  const activeImageFallbackChain = activeImageCandidates.slice(1).join('||');
 
   return (
     <div className="pt-32 pb-20 overflow-hidden bg-[#050505]">
@@ -98,7 +162,7 @@ export const Services = ({ openModal }: ServicesProps) => {
               Еталонний <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f4e4bf] via-[#d5b57a] to-[#b9904d]">Догляд</span>
             </h1>
-            <p className="text-gray-300/90 text-lg font-light max-w-2xl leading-relaxed">
+            <p className="text-gray-100/90 text-lg font-light max-w-2xl leading-relaxed">
               Кожна послуга оформлена як окремий преміальний пакет: фокус на якості, результаті та чіткому сценарії запису.
             </p>
           </div>
@@ -135,13 +199,19 @@ export const Services = ({ openModal }: ServicesProps) => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.45 }}
-              className="relative overflow-hidden border border-[#d5b57a]/25 bg-[#0a0a0a] shadow-[0_30px_60px_rgba(0,0,0,0.45)]"
+              drag="x"
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.08}
+              onDragEnd={handleSpotlightDragEnd}
+              className="relative overflow-hidden border border-[#d5b57a]/25 bg-[#0a0a0a] shadow-[0_30px_60px_rgba(0,0,0,0.45)] cursor-grab active:cursor-grabbing touch-pan-y"
             >
               <img
-                src={activeService.image}
+                src={activeImageSrc}
+                data-fallback-chain={activeImageFallbackChain}
                 alt={activeService.title}
-                className="absolute inset-0 w-full h-full object-cover opacity-28"
+                className="absolute inset-0 w-full h-full object-cover object-center opacity-28"
                 referrerPolicy="no-referrer"
+                onError={handleImageError}
               />
               <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#070707]/94 to-[#090909]/84" />
               <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(213,181,122,0.12),transparent_35%)]" />
@@ -156,13 +226,13 @@ export const Services = ({ openModal }: ServicesProps) => {
                   <h2 className="text-3xl md:text-5xl font-bold font-display text-white mb-5 leading-tight">
                     {activeService.title}
                   </h2>
-                  <p className="text-gray-300 text-sm md:text-base leading-relaxed max-w-2xl mb-10">
+                  <p className="text-gray-100 text-sm md:text-base leading-relaxed max-w-2xl mb-10">
                     {activeService.description}
                   </p>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
                     {activeService.features.map((feature, i) => (
-                      <div key={i} className="flex items-center gap-3 text-[11px] uppercase tracking-[0.16em] text-gray-200">
+                      <div key={i} className="flex items-center gap-3 text-[11px] uppercase tracking-[0.16em] text-[#f3e8cf]">
                         <span className="w-1.5 h-1.5 bg-[#d5b57a]" />
                         {feature}
                       </div>
@@ -172,9 +242,12 @@ export const Services = ({ openModal }: ServicesProps) => {
                   <button
                     type="button"
                     onClick={() => openModal(activeService.title)}
-                    className="w-full sm:w-auto px-10 py-5 bg-[#d5b57a] text-black font-bold text-xs tracking-[0.3em] uppercase hover:bg-[#e6cc95] transition-all inline-flex items-center justify-center gap-4 group/btn"
+                    className="relative overflow-hidden w-full sm:w-auto px-10 py-5 bg-[#d5b57a] text-black font-bold text-xs tracking-[0.3em] uppercase hover:bg-[#e6cc95] transition-all inline-flex items-center justify-center group/btn focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#e6cc95] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                   >
-                    Записатися <ArrowRight size={16} className="group-hover/btn:translate-x-2 transition-transform" />
+                    <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700" />
+                    <span className="relative inline-flex items-center gap-4">
+                      Записатися <ArrowRight size={16} className="group-hover/btn:translate-x-2 transition-transform" />
+                    </span>
                   </button>
                 </div>
 
@@ -182,10 +255,13 @@ export const Services = ({ openModal }: ServicesProps) => {
                   <div className="p-6 border border-[#d5b57a]/25 bg-black/35 backdrop-blur-sm">
                     <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#c1a772] mb-3">Орієнтовна ціна</div>
                     <div className="text-3xl md:text-4xl font-display font-bold text-white">{activeService.price}</div>
+                    <p className="mt-4 text-[11px] text-gray-200/90 leading-relaxed">
+                      Без прихованих платежів. Остаточна вартість узгоджується після огляду авто.
+                    </p>
                   </div>
 
                   <div className="p-6 border border-white/10 bg-black/35 backdrop-blur-sm">
-                    <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-gray-400 mb-4">Ключова перевага</div>
+                    <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-gray-300 mb-4">Ключова перевага</div>
                     <div className="flex items-center gap-3 text-[#e6cc95] text-sm font-semibold">
                       {activeService.icon}
                       <span className="text-white">{activeService.tooltip}</span>
@@ -218,6 +294,10 @@ export const Services = ({ openModal }: ServicesProps) => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
               {services.map((service, index) => {
                 const isActive = index === normalizedIndex;
+                const imageCandidates = getImageCandidates(service.image, index);
+                const imageSrc = imageCandidates[0] ?? fallbackLogo;
+                const fallbackChain = imageCandidates.slice(1).join('||');
+
                 return (
                   <button
                     key={service.id}
@@ -229,13 +309,20 @@ export const Services = ({ openModal }: ServicesProps) => {
                         : 'border-white/10 hover:border-[#d5b57a]/45'
                     }`}
                   >
+                    {isActive && (
+                      <span className="absolute top-2 right-2 z-10 px-2 py-1 text-[9px] font-bold uppercase tracking-[0.16em] bg-[#d5b57a] text-black">
+                        Активно
+                      </span>
+                    )}
                     <img
-                      src={service.image}
+                      src={imageSrc}
+                      data-fallback-chain={fallbackChain}
                       alt={service.title}
-                      className={`absolute inset-0 w-full h-full object-cover transition-all duration-500 ${
+                      className={`absolute inset-0 w-full h-full object-cover object-center transition-all duration-500 ${
                         isActive ? 'opacity-78 scale-105' : 'opacity-35'
                       }`}
                       referrerPolicy="no-referrer"
+                      onError={handleImageError}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-black/10" />
                     <div className="absolute inset-x-0 bottom-0 p-4">
