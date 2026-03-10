@@ -214,8 +214,8 @@ export const Services = ({ openModal }: ServicesProps) => {
             </motion.article>
           </AnimatePresence>
 
-          <div className="mt-8 overflow-x-auto pb-2">
-            <div className="flex gap-4 min-w-max">
+          <div className="mt-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
               {services.map((service, index) => {
                 const isActive = index === normalizedIndex;
                 return (
@@ -223,7 +223,7 @@ export const Services = ({ openModal }: ServicesProps) => {
                     key={service.id}
                     type="button"
                     onClick={() => updateCarousel(index)}
-                    className={`relative w-[240px] h-[144px] overflow-hidden border transition-all text-left ${
+                    className={`relative h-[144px] overflow-hidden border transition-all text-left ${
                       isActive
                         ? 'border-[#d5b57a] shadow-[0_16px_34px_rgba(213,181,122,0.25)]'
                         : 'border-white/10 hover:border-[#d5b57a]/45'
