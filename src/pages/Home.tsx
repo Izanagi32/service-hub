@@ -263,31 +263,74 @@ export const Home = () => {
       </section>
 
       {/* Process Section */}
-      <section className="py-32 bg-[#050505] relative border-t border-white/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div {...fadeInUp} className="mb-20 text-center">
-            <span className="text-blue-500 text-xs font-bold tracking-[0.2em] uppercase mb-4 block">Як ми працюємо</span>
-            <h2 className="text-4xl md:text-5xl font-bold font-display text-white">Процес Досконалості</h2>
+      <section className="py-32 bg-[#050505] relative border-t border-white/5 overflow-hidden">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[420px] bg-[radial-gradient(circle,rgba(37,99,235,0.16),rgba(0,0,0,0))] blur-[120px] pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <motion.div {...fadeInUp} className="mb-16 text-center max-w-3xl mx-auto">
+            <span className="text-blue-500 text-xs font-bold tracking-[0.22em] uppercase mb-4 block">Як ми працюємо</span>
+            <h2 className="text-4xl md:text-6xl font-bold font-display text-white mb-5">Процес Досконалості</h2>
+            <p className="text-gray-300/90 leading-relaxed">
+              Кожен етап побудований так, щоб ви отримали прогнозований результат, прозору комунікацію та контроль якості на фініші.
+            </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {processSteps.map((step, index) => (
-              <motion.div 
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="relative group"
-              >
-                <div className="text-6xl font-display font-bold text-white/5 mb-4 group-hover:text-blue-500/10 transition-colors">{step.number}</div>
-                <h3 className="text-xl font-bold text-white mb-3 font-display">{step.title}</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">{step.description}</p>
-                {index < processSteps.length - 1 && (
-                  <div className="hidden md:block absolute top-12 right-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-1/2" />
-                )}
-              </motion.div>
-            ))}
+          <div className="grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] gap-8 lg:gap-10 items-start">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="border border-white/10 bg-white/[0.02] p-8 md:p-10"
+            >
+              <div className="inline-flex items-center gap-3 px-4 py-2 border border-blue-500/35 bg-blue-500/10 mb-8">
+                <CheckCircle2 className="w-4 h-4 text-blue-400" />
+                <span className="text-[10px] uppercase tracking-[0.22em] font-bold text-blue-300">Service Blueprint</span>
+              </div>
+
+              <h3 className="text-2xl md:text-3xl font-display text-white font-bold mb-4">4 кроки до ідеального результату</h3>
+              <p className="text-gray-300 text-sm leading-relaxed mb-8">
+                Ми працюємо за чіткою схемою: від первинної консультації до фінального контролю якості та рекомендацій по подальшому догляду.
+              </p>
+
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  { label: 'Етапів', value: String(processSteps.length) },
+                  { label: 'Контроль', value: '100%' },
+                  { label: 'Комунікація', value: 'Прозора' },
+                  { label: 'Підхід', value: 'Індивідуальний' },
+                ].map((item) => (
+                  <div key={item.label} className="border border-white/10 bg-black/20 p-4">
+                    <div className="text-[10px] text-gray-500 uppercase tracking-[0.16em] mb-2">{item.label}</div>
+                    <div className="text-white font-bold text-sm">{item.value}</div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {processSteps.map((step, index) => (
+                <motion.article
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.45, delay: index * 0.08 }}
+                  className="relative border border-white/10 bg-white/[0.02] p-6 md:p-7 group hover:border-blue-500/45 hover:bg-blue-950/10 transition-all"
+                >
+                  <div className="flex items-center justify-between mb-5">
+                    <span className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold">Крок</span>
+                    <span className="text-xl font-display font-bold text-blue-300">{step.number}</span>
+                  </div>
+
+                  <h3 className="text-xl font-bold text-white font-display mb-3 group-hover:text-blue-300 transition-colors">
+                    {step.title}
+                  </h3>
+                  <p className="text-gray-300 text-sm leading-relaxed">{step.description}</p>
+
+                  <div className="mt-6 h-px w-full bg-gradient-to-r from-blue-500/40 via-white/20 to-transparent" />
+                </motion.article>
+              ))}
+            </div>
           </div>
         </div>
       </section>
