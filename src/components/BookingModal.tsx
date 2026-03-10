@@ -147,7 +147,7 @@ export const BookingModal = ({
                         onChange={(e) => {
                           setFormData({ ...formData, service: e.target.value });
                         }}
-                        className="w-full bg-white/[0.03] border border-white/12 px-5 py-4 text-white text-lg leading-none focus:outline-none focus:border-blue-500 transition-colors appearance-none"
+                        className="w-full bg-white/[0.03] border border-white/15 px-5 py-3.5 text-white text-[22px] md:text-[24px] leading-none focus:outline-none focus:border-blue-400 transition-colors appearance-none"
                       >
                         {services.map((service) => (
                           <option key={service.id} value={service.title} className="bg-[#06080f] text-white">
@@ -172,8 +172,8 @@ export const BookingModal = ({
                       aria-invalid={Boolean(errors.name)}
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className={`w-full bg-transparent border px-5 py-4 text-white text-[30px] md:text-[34px] leading-none focus:outline-none transition-colors placeholder:text-[#26365a] ${
-                        errors.name ? "border-red-500" : "border-white/12 focus:border-blue-500"
+                      className={`w-full bg-white/[0.02] border px-5 py-3.5 text-white text-[22px] md:text-[26px] leading-none focus:outline-none transition-colors placeholder:text-[#40588d] ${
+                        errors.name ? "border-red-500" : "border-white/15 focus:border-blue-400"
                       }`}
                       placeholder="Олександр"
                     />
@@ -193,8 +193,8 @@ export const BookingModal = ({
                       aria-invalid={Boolean(errors.phone)}
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className={`w-full bg-transparent border px-5 py-4 text-[30px] md:text-[34px] text-white leading-none focus:outline-none transition-colors placeholder:text-[#26365a] ${
-                        errors.phone ? "border-red-500" : "border-white/12 focus:border-blue-500"
+                      className={`w-full bg-white/[0.02] border px-5 py-3.5 text-[22px] md:text-[26px] text-white leading-none focus:outline-none transition-colors placeholder:text-[#40588d] ${
+                        errors.phone ? "border-red-500" : "border-white/15 focus:border-blue-400"
                       }`}
                       placeholder="+38 (0__) ___ __ __"
                     />
