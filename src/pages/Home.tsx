@@ -7,7 +7,8 @@ import {
   Sparkles,
   ShieldCheck,
   Trophy,
-  CheckCircle2
+  CheckCircle2,
+  ArrowRight
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { SEO } from '../components/SEO';
@@ -108,6 +109,7 @@ export const Home = () => {
   };
 
   const [testimonialIndex, setTestimonialIndex] = useState(0);
+  const [openFaqIndex, setOpenFaqIndex] = useState(0);
 
   const nextTestimonial = () => {
     setTestimonialIndex((prev) => (prev + 1) % testimonials.length);
@@ -115,6 +117,10 @@ export const Home = () => {
 
   const prevTestimonial = () => {
     setTestimonialIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+  };
+
+  const toggleFaq = (index: number) => {
+    setOpenFaqIndex((prev) => (prev === index ? -1 : index));
   };
 
   return (
@@ -500,27 +506,104 @@ export const Home = () => {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-32 bg-[#080808]">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div {...fadeInUp} className="text-center mb-20">
-            <span className="text-blue-500 text-xs font-bold tracking-[0.2em] uppercase mb-4 block">Питання та відповіді</span>
-            <h2 className="text-4xl md:text-5xl font-bold font-display text-white">Часті Запитання</h2>
-          </motion.div>
+      <section className="py-32 bg-[#080808] relative overflow-hidden border-t border-white/5">
+        <div className="absolute top-1/2 left-1/2 w-[820px] h-[820px] -translate-x-1/2 -translate-y-1/2 bg-blue-700/10 blur-[150px] pointer-events-none" />
 
-          <div className="space-y-4">
-            {faqs.map((faq, i) => (
-              <details key={i} className="group bg-white/[0.02] border border-white/5 overflow-hidden transition-all">
-                <summary className="flex items-center justify-between p-8 cursor-pointer list-none">
-                  <span className="text-white font-bold font-display tracking-wide group-open:text-blue-500 transition-colors">{faq.question}</span>
-                  <div className="w-8 h-8 border border-white/10 flex items-center justify-center group-open:rotate-45 transition-transform">
-                    <ChevronRight className="w-4 h-4" />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] gap-10 lg:gap-14 items-start">
+            <motion.aside
+              {...fadeInUp}
+              className="lg:sticky lg:top-28 p-8 md:p-10 border border-white/10 bg-white/[0.02]"
+            >
+              <span className="text-blue-400 text-[10px] font-bold tracking-[0.24em] uppercase mb-5 block">FAQ Concierge</span>
+              <h2 className="text-4xl md:text-5xl font-bold font-display text-white leading-[1.02] mb-6">
+                Часті <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">Запитання</span>
+              </h2>
+              <p className="text-gray-300 text-sm leading-relaxed mb-8">
+                Зібрали найважливіші відповіді перед записом: терміни, оплата, зберігання авто та формат онлайн-заявки.
+              </p>
+
+              <div className="grid grid-cols-2 gap-4 mb-8">
+                {[
+                  { label: 'Відповідь', value: 'до 15 хв' },
+                  { label: 'Пакетів', value: '6+' },
+                  { label: 'Графік', value: '09:00-20:00' },
+                  { label: 'Сервіс', value: 'Premium' },
+                ].map((item) => (
+                  <div key={item.label} className="border border-white/10 bg-black/20 p-4">
+                    <div className="text-[10px] text-gray-500 uppercase tracking-[0.18em] mb-2">{item.label}</div>
+                    <div className="text-white text-sm font-bold">{item.value}</div>
                   </div>
-                </summary>
-                <div className="px-8 pb-8 text-gray-400 text-sm leading-relaxed border-t border-white/5 pt-8">
-                  {faq.answer}
-                </div>
-              </details>
-            ))}
+                ))}
+              </div>
+
+              <div className="space-y-3">
+                <Link
+                  to="/contact"
+                  className="w-full inline-flex items-center justify-center gap-3 px-6 py-4 bg-blue-600 text-white text-xs font-bold uppercase tracking-[0.22em] hover:bg-white hover:text-black transition-all"
+                >
+                  Поставити питання <ArrowRight size={14} />
+                </Link>
+                <a
+                  href={`tel:${BUSINESS_INFO.phoneE164}`}
+                  className="w-full inline-flex items-center justify-center border border-white/15 px-6 py-4 text-xs font-bold uppercase tracking-[0.22em] text-gray-200 hover:border-blue-400 hover:text-white transition-all"
+                >
+                  Зателефонувати
+                </a>
+              </div>
+            </motion.aside>
+
+            <div className="space-y-4">
+              {faqs.map((faq, i) => {
+                const isOpen = openFaqIndex === i;
+                return (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 14 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.04 }}
+                    className={`border transition-all ${isOpen ? 'border-blue-500/45 bg-blue-950/10' : 'border-white/10 bg-white/[0.02] hover:border-white/25'}`}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => toggleFaq(i)}
+                      aria-expanded={isOpen}
+                      aria-controls={`faq-answer-${i}`}
+                      className="w-full p-6 md:p-7 text-left flex items-center justify-between gap-4"
+                    >
+                      <span className={`font-display text-lg md:text-xl leading-snug ${isOpen ? 'text-white' : 'text-gray-100'}`}>
+                        {faq.question}
+                      </span>
+                      <div className="flex items-center gap-3 shrink-0">
+                        <span className="text-[10px] text-gray-500 font-bold tracking-[0.22em]">{String(i + 1).padStart(2, '0')}</span>
+                        <span className={`w-9 h-9 border flex items-center justify-center transition-all ${isOpen ? 'border-blue-400 text-blue-300 rotate-90' : 'border-white/15 text-gray-400'}`}>
+                          <ChevronRight className="w-4 h-4" />
+                        </span>
+                      </div>
+                    </button>
+
+                    <AnimatePresence initial={false}>
+                      {isOpen && (
+                        <motion.div
+                          id={`faq-answer-${i}`}
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.28, ease: 'easeOut' }}
+                          className="overflow-hidden"
+                        >
+                          <div className="px-6 md:px-7 pb-6 md:pb-7 border-t border-white/10 pt-5">
+                            <p className="text-gray-300 text-sm md:text-base leading-relaxed">{faq.answer}</p>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </section>
