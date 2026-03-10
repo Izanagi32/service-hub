@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, SyntheticEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Star, 
@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { SEO } from '../components/SEO';
-import { portfolioItems, processSteps, testimonials, faqs } from '../constants';
+import { portfolioItems, processSteps, testimonials, faqs, services } from '../constants';
 import { BUSINESS_INFO } from '../siteContent';
 
 const fadeInUp = {
@@ -26,6 +26,48 @@ export const Home = () => {
   const [dragX, setDragX] = useState(0);
   const trackRef = useRef<HTMLDivElement>(null);
   const portfolioFallbackImage = '/logo.png';
+  const portfolioImageFallbacks = services.map((service) => service.image);
+
+  const getPortfolioImageCandidates = (
+    primaryImage: string | undefined,
+    legacyImage: string | undefined,
+    index: number,
+  ): string[] => {
+    const serviceFallback =
+      portfolioImageFallbacks.length > 0
+        ? portfolioImageFallbacks[index % portfolioImageFallbacks.length]
+        : undefined;
+
+    return Array.from(
+      new Set(
+        [primaryImage, legacyImage, serviceFallback, ...portfolioImageFallbacks, portfolioFallbackImage].filter(
+          Boolean,
+        ) as string[],
+      ),
+    );
+  };
+
+  const handlePortfolioImageError = (event: SyntheticEvent<HTMLImageElement>) => {
+    const target = event.currentTarget;
+    const chain = (target.dataset.fallbackChain ?? "")
+      .split("||")
+      .map((src) => src.trim())
+      .filter(Boolean);
+
+    const nextSrc = chain.shift();
+    if (nextSrc) {
+      target.dataset.fallbackChain = chain.join("||");
+      target.src = nextSrc;
+      return;
+    }
+
+    if (target.dataset.finalFallbackApplied === "true") {
+      return;
+    }
+
+    target.dataset.finalFallbackApplied = "true";
+    target.src = portfolioFallbackImage;
+  };
 
   const getCardWidth = () => {
     if (trackRef.current && trackRef.current.firstElementChild) {
@@ -305,7 +347,10 @@ export const Home = () => {
             >
               {portfolioItems.map((item, index) => {
                 const isActive = index === carouselIndex;
-                
+                const imageCandidates = getPortfolioImageCandidates(item.image, item.url, index);
+                const primaryImage = imageCandidates[0] ?? portfolioFallbackImage;
+                const fallbackChain = imageCandidates.slice(1).join("||");
+
                 return (
                   <motion.div 
                     key={index}
@@ -322,13 +367,14 @@ export const Home = () => {
                         className="w-full h-full object-cover opacity-35"
                       />
                       <img 
-                        src={item.image ?? item.url ?? portfolioFallbackImage} 
+                        src={primaryImage}
+                        data-fallback-chain={fallbackChain}
                         alt={item.title} 
                         className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105"
                         referrerPolicy="no-referrer"
-                        onError={(event) => {
-                          event.currentTarget.style.display = 'none';
-                        }}
+                        loading="lazy"
+                        decoding="async"
+                        onError={handlePortfolioImageError}
                       />
                     </div>
                     
@@ -481,5 +527,3 @@ export const Home = () => {
     </>
   );
 };
-
-
