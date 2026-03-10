@@ -32,8 +32,8 @@ export const TermsOfService = () => {
     <div className="pt-24 sm:pt-28 md:pt-32 pb-14 sm:pb-16 md:pb-20 bg-[#050505] overflow-hidden">
       <SEO
         title="Умови сервісу"
-        description="Умови надання послуг ServiceHub: запис, оплата, перенесення візиту, гарантійні умови та відповідальність сторін."
-        keywords="умови сервісу, правила обслуговування, servicehub"
+        description="Умови надання послуг HubService: запис, оплата, перенесення візиту, гарантійні умови та відповідальність сторін."
+        keywords="умови сервісу, правила обслуговування, hubservice"
       />
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">

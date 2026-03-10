@@ -73,7 +73,7 @@ export default function App() {
     if (!formData.phone.trim()) {
       newErrors.phone = "Будь ласка, введіть номер телефону";
     } else if (!phoneRegex.test(cleanPhone)) {
-      newErrors.phone = "Невірний формат номера (наприклад 0991234567)";
+      newErrors.phone = "Невірний формат номера (наприклад 0671050555)";
     }
 
     setErrors(newErrors);

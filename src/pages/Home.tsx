@@ -159,21 +159,21 @@ export const Home = () => {
     <>
       <SEO 
         title="Головна" 
-        description="ServiceHub - преміальна студія детейлінгу та сервісу в Києві. Професійне полірування, 3D розвал-сходження, хімчистка та захист кузова."
-        keywords="детейлінг київ, полірування авто, розвал-сходження 3d, хімчистка салону, кераміка для авто, захисна плівка"
+        description="HubService - автосервіс у Горохові. Мийка, хімчистка, полірування, заправка кондиціонерів та 3D розвал-сходження."
+        keywords="мийка горохів, хімчистка авто, полірування авто, заправка кондиціонера авто, 3d розвал-сходження"
         schema={{
           "@context": "https://schema.org",
           "@type": "AutoBodyShop",
-          "name": "ServiceHub Detailing Studio",
+          "name": "HubService",
           "image": "https://images.unsplash.com/photo-1617788138017-80ad40651399?q=80&w=1200&auto=format&fit=crop",
           "@id": BUSINESS_INFO.siteUrl,
           "url": BUSINESS_INFO.siteUrl,
           "telephone": BUSINESS_INFO.phoneE164,
           "address": {
             "@type": "PostalAddress",
-            "streetAddress": "вул. Велика Васильківська, 100",
-            "addressLocality": "Київ",
-            "postalCode": "03150",
+            "streetAddress": "вул. Козацька, 98",
+            "addressLocality": "Горохів",
+            "postalCode": "45700",
             "addressCountry": "UA"
           },
           "geo": {
@@ -195,8 +195,8 @@ export const Home = () => {
             "closes": "20:00"
           },
           "sameAs": [
-            "https://www.facebook.com/servicehub",
-            "https://www.instagram.com/servicehub"
+            "https://www.facebook.com/hubservice",
+            "https://www.instagram.com/hubservice"
           ]
         }}
       />

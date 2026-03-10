@@ -22,17 +22,17 @@ export const About = () => {
     <div className="pt-24 sm:pt-28 md:pt-32 pb-14 sm:pb-16 md:pb-20">
       <SEO 
         title="Про Нас" 
-        description="Дізнайтеся більше про ServiceHub - лідера у сфері професійного детейлінгу в Києві. Наша історія, цінності та безкомпромісний підхід до якості."
-        keywords="про детейлінг студію, історія servicehub, цінності компанії, професійний сервіс авто"
+        description="Дізнайтеся більше про HubService - лідера у сфері професійного детейлінгу в Горохові. Наша історія, цінності та безкомпромісний підхід до якості."
+        keywords="про детейлінг студію, історія hubservice, цінності компанії, професійний сервіс авто"
         schema={{
           "@context": "https://schema.org",
           "@type": "AboutPage",
           "mainEntity": {
             "@type": "Organization",
-            "name": "ServiceHub",
-            "description": "Студія професійного догляду за автомобілем у Києві.",
+            "name": "HubService",
+            "description": "Студія професійного догляду за автомобілем у Горохові.",
             "foundingDate": "2014",
-            "areaServed": "Kyiv, Ukraine"
+            "areaServed": "Horokhiv, Ukraine"
           }
         }}
       />
@@ -48,7 +48,7 @@ export const About = () => {
               </span>
             </h1>
             <p className="text-gray-400 text-base sm:text-lg font-light leading-relaxed mb-8 sm:mb-12">
-              ServiceHub - це не просто детейлінг студія. Це місце, де пристрасть до автомобілів зустрічається з найвищими стандартами якості та професіоналізму.
+              HubService - це не просто детейлінг студія. Це місце, де пристрасть до автомобілів зустрічається з найвищими стандартами якості та професіоналізму.
             </p>
             <div className="grid grid-cols-2 gap-6 sm:gap-10 md:gap-12">
               <div>

@@ -116,18 +116,18 @@ export const Services = ({ openModal }: ServicesProps) => {
     <div className="pt-24 sm:pt-28 md:pt-32 pb-14 sm:pb-16 md:pb-20 overflow-hidden bg-[#050505]">
       <SEO
         title="Послуги"
-        description="Повний спектр послуг з догляду за авто: 3D розвал-сходження, преміальне полірування, хімчистка та захист кузова плівкою в Києві."
-        keywords="ціни на детейлінг, вартість полірування авто, розвал-сходження ціна київ, хімчистка авто ціна"
+        description="Повний спектр послуг HubService у Горохові: мийка, хімчистка, полірування, хімчистка килимів, заправка кондиціонерів та 3D розвал-сходження."
+        keywords="ціни на автосервіс, полірування авто, заправка кондиціонера, розвал-сходження горохів"
         schema={{
           '@context': 'https://schema.org',
           '@type': 'Service',
           serviceType: 'Детейлінг і догляд за авто',
           provider: {
             '@type': 'AutoBodyShop',
-            name: 'ServiceHub',
+            name: 'HubService',
             address: {
               '@type': 'PostalAddress',
-              addressLocality: 'Київ',
+              addressLocality: 'Горохів',
               addressCountry: 'UA',
             },
           },

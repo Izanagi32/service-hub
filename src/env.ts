@@ -1,4 +1,4 @@
-const DEFAULT_SITE_URL = "https://servicehub.kyiv.ua";
+const DEFAULT_SITE_URL = "https://servicehubmaster.com";
 
 const toUrl = (value: string, key: string): string => {
   try {

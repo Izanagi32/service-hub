@@ -50,13 +50,13 @@ export const Layout = ({ children, openModal }: LayoutProps) => {
                 <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent" />
                 <img
                   src={logoSrc}
-                  alt="ServiceHub"
+                  alt={BUSINESS_INFO.brand}
                   className="h-9 w-9 sm:h-12 sm:w-12 lg:h-16 lg:w-16 rounded-full object-cover group-hover:scale-105 transition-transform"
                 />
               </div>
               <div className="leading-none min-w-0">
                 <div className="text-[11px] sm:text-[13px] lg:text-[14px] tracking-[0.16em] sm:tracking-[0.22em] uppercase text-gray-200 font-semibold whitespace-nowrap">
-                  Service Hub
+                  HubService
                 </div>
                 <div className="hidden sm:block text-[9px] lg:text-[10px] tracking-[0.2em] uppercase text-gray-500 mt-1.5 whitespace-nowrap">
                   Преміальний догляд за авто
@@ -153,15 +153,15 @@ export const Layout = ({ children, openModal }: LayoutProps) => {
             <div className="col-span-1 md:col-span-2">
               <div className="inline-flex items-center gap-3 sm:gap-4 mb-7 sm:mb-8 rounded-xl border border-white/10 bg-white/[0.02] px-3.5 sm:px-4 py-3">
                 <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-full border border-white/20 bg-[#0d1421] flex items-center justify-center overflow-hidden shadow-[0_6px_14px_rgba(0,0,0,0.45)]">
-                  <img src={logoSrc} alt="ServiceHub" className="h-9 w-9 sm:h-11 sm:w-11 rounded-full object-cover" />
+                  <img src={logoSrc} alt={BUSINESS_INFO.brand} className="h-9 w-9 sm:h-11 sm:w-11 rounded-full object-cover" />
                 </div>
                 <div>
-                  <div className="text-[12px] sm:text-[13px] tracking-[0.18em] sm:tracking-[0.2em] uppercase font-semibold text-white">Service Hub</div>
+                  <div className="text-[12px] sm:text-[13px] tracking-[0.18em] sm:tracking-[0.2em] uppercase font-semibold text-white">HubService</div>
                   <div className="text-[9px] sm:text-[10px] tracking-[0.18em] sm:tracking-[0.2em] uppercase text-[#d5b57a] mt-1">Преміальний догляд за авто Studio</div>
                 </div>
               </div>
               <p className="text-gray-500 max-w-sm mb-7 sm:mb-8 leading-relaxed text-sm sm:text-base">
-                Ми надаємо преміальний сервіс догляду за автомобілем у Києві.
+                Ми надаємо преміальний сервіс догляду за автомобілем у Горохові.
                 Наша репутація - це якість робіт, прозора комунікація та увага до деталей.
               </p>
               <div className="flex gap-4">

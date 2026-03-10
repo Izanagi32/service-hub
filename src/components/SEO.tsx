@@ -22,7 +22,7 @@ export const SEO = ({
   schema,
 }: SEOProps) => {
   const location = useLocation();
-  const siteTitle = "ServiceHub | Преміальний детейлінг та сервіс";
+  const siteTitle = "HubService | Автосервіс у Горохові";
   const fullTitle = `${title} | ${siteTitle}`;
   const canonicalUrl = url ? absoluteSiteUrl(url) : absoluteSiteUrl(location.pathname);
   const ogImage = image ? absoluteSiteUrl(image) : absoluteSiteUrl(`${import.meta.env.BASE_URL}logo.png`);
@@ -40,7 +40,7 @@ export const SEO = ({
       <meta property="og:description" content={description} />
       <meta property="og:image" content={ogImage} />
       <meta property="og:url" content={canonicalUrl} />
-      <meta property="og:site_name" content="ServiceHub" />
+      <meta property="og:site_name" content="HubService" />
 
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={fullTitle} />

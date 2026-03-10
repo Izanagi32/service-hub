@@ -32,8 +32,8 @@ export const PrivacyPolicy = () => {
     <div className="pt-24 sm:pt-28 md:pt-32 pb-14 sm:pb-16 md:pb-20 bg-[#050505] overflow-hidden">
       <SEO
         title="Політика конфіденційності"
-        description="Політика конфіденційності ServiceHub: які дані ми збираємо, як використовуємо та як захищаємо персональну інформацію."
-        keywords="політика конфіденційності, servicehub, персональні дані"
+        description="Політика конфіденційності HubService: які дані ми збираємо, як використовуємо та як захищаємо персональну інформацію."
+        keywords="політика конфіденційності, hubservice, персональні дані"
       />
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
