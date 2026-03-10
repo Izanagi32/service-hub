@@ -47,7 +47,7 @@ export const BookingModal = ({
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-2.5 sm:p-6">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -61,7 +61,7 @@ export const BookingModal = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.97, y: 10 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="relative w-full max-w-[1160px] overflow-hidden rounded-[28px] border border-white/12 bg-[#040712]/95 shadow-[0_40px_120px_rgba(0,0,0,0.62)] flex flex-col md:flex-row"
+            className="relative w-full max-w-[1160px] max-h-[calc(100svh-1.25rem)] sm:max-h-[calc(100svh-3rem)] overflow-y-auto md:overflow-hidden rounded-[24px] sm:rounded-[28px] border border-white/12 bg-[#040712]/95 shadow-[0_40px_120px_rgba(0,0,0,0.62)] flex flex-col md:flex-row"
             role="dialog"
             aria-modal="true"
             aria-labelledby="booking-modal-title"
@@ -70,12 +70,12 @@ export const BookingModal = ({
               onClick={onClose}
               type="button"
               aria-label="Закрити форму запису"
-              className="absolute top-5 right-5 z-20 w-11 h-11 rounded-lg border border-white/20 bg-black/35 text-white/65 hover:text-white hover:border-white/35 hover:bg-white/10 transition-all flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300/50"
+              className="absolute top-3 right-3 sm:top-5 sm:right-5 z-20 w-10 h-10 sm:w-11 sm:h-11 rounded-lg border border-white/20 bg-black/45 text-white/65 hover:text-white hover:border-white/35 hover:bg-white/10 transition-all flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300/50"
             >
               <X size={20} />
             </button>
 
-            <aside className="w-full md:w-[43%] p-7 md:p-10 lg:p-12 relative overflow-hidden bg-[linear-gradient(160deg,#2963ff_0%,#2148b7_56%,#0f1e4d_100%)]">
+            <aside className="w-full md:w-[43%] p-5 sm:p-7 md:p-10 lg:p-12 relative overflow-hidden bg-[linear-gradient(160deg,#2963ff_0%,#2148b7_56%,#0f1e4d_100%)]">
               <div
                 className="absolute inset-0 pointer-events-none opacity-45"
                 style={{
@@ -88,10 +88,10 @@ export const BookingModal = ({
 
               <div className="relative z-10 h-full flex flex-col">
                 <div className="mb-10">
-                  <div className="w-14 h-14 rounded-xl border border-white/25 bg-white/10 flex items-center justify-center mb-6 shadow-[0_10px_24px_rgba(0,0,0,0.2)]">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl border border-white/25 bg-white/10 flex items-center justify-center mb-5 sm:mb-6 shadow-[0_10px_24px_rgba(0,0,0,0.2)]">
                     <Sparkles className="text-white w-7 h-7" />
                   </div>
-                  <h2 id="booking-modal-title" className="text-4xl md:text-5xl font-bold font-display text-white mb-4 leading-[0.95]">
+                  <h2 id="booking-modal-title" className="text-3xl sm:text-4xl md:text-5xl font-bold font-display text-white mb-4 leading-[0.95]">
                     Запис на візит
                   </h2>
                   <p className="text-blue-50/88 text-base leading-relaxed max-w-md">
@@ -99,7 +99,7 @@ export const BookingModal = ({
                   </p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 mb-9">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-7 sm:mb-9">
                   <div className="rounded-xl border border-white/22 bg-black/22 backdrop-blur-sm p-3.5">
                     <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-blue-100/80 mb-1">Відповідь</div>
                     <div className="text-white text-sm font-semibold">до 15 хв</div>
@@ -118,7 +118,7 @@ export const BookingModal = ({
                         <div className="w-9 h-9 rounded-lg border border-white/22 bg-black/25 flex items-center justify-center">
                           <Icon size={16} className="text-blue-100" />
                         </div>
-                        <span className="text-[13px] font-semibold uppercase tracking-[0.14em]">{item.text}</span>
+                        <span className="text-[11px] sm:text-[13px] font-semibold uppercase tracking-[0.12em] sm:tracking-[0.14em]">{item.text}</span>
                       </div>
                     );
                   })}
@@ -126,7 +126,7 @@ export const BookingModal = ({
               </div>
             </aside>
 
-            <section className="w-full md:w-[57%] p-7 md:p-10 lg:p-12 bg-[#040712] relative">
+            <section className="w-full md:w-[57%] p-5 sm:p-7 md:p-10 lg:p-12 bg-[#040712] relative">
               <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top_left,rgba(52,112,255,0.18),transparent_36%)]" />
 
               {isSuccess ? (
@@ -144,7 +144,7 @@ export const BookingModal = ({
                   </p>
                 </motion.div>
               ) : (
-                <form onSubmit={handleBookingSubmit} className="relative z-10 space-y-6">
+                <form onSubmit={handleBookingSubmit} className="relative z-10 space-y-5 sm:space-y-6">
                   <div className="space-y-2">
                     <label htmlFor="booking-service" className="text-[11px] font-bold uppercase tracking-[0.22em] text-gray-400">
                       Послуга
@@ -156,7 +156,7 @@ export const BookingModal = ({
                         onChange={(e) => {
                           setFormData({ ...formData, service: e.target.value });
                         }}
-                        className="w-full rounded-xl bg-[#0a1022]/95 border border-white/15 px-4 py-4 pr-12 text-white text-[17px] md:text-[18px] leading-[1.2] font-medium focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-500/25 transition-colors appearance-none"
+                        className="w-full rounded-xl bg-[#0a1022]/95 border border-white/15 px-4 py-3.5 sm:py-4 pr-12 text-white text-[16px] sm:text-[17px] md:text-[18px] leading-[1.2] font-medium focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-500/25 transition-colors appearance-none"
                       >
                         {services.map((service) => (
                           <option key={service.id} value={service.title} className="bg-[#06080f] text-white">
@@ -181,7 +181,7 @@ export const BookingModal = ({
                       aria-invalid={Boolean(errors.name)}
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className={`w-full rounded-xl bg-[#0a1022]/95 border px-4 py-4 text-white text-[17px] md:text-[18px] leading-[1.2] focus:outline-none transition-colors placeholder:text-[#4a6096]/90 ${
+                      className={`w-full rounded-xl bg-[#0a1022]/95 border px-4 py-3.5 sm:py-4 text-white text-[16px] sm:text-[17px] md:text-[18px] leading-[1.2] focus:outline-none transition-colors placeholder:text-[#4a6096]/90 ${
                         errors.name ? "border-red-500" : "border-white/15 focus:border-blue-400 focus:ring-2 focus:ring-blue-500/25"
                       }`}
                       placeholder="Олександр"
@@ -202,7 +202,7 @@ export const BookingModal = ({
                       aria-invalid={Boolean(errors.phone)}
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className={`w-full rounded-xl bg-[#0a1022]/95 border px-4 py-4 text-[17px] md:text-[18px] text-white leading-[1.2] focus:outline-none transition-colors placeholder:text-[#4a6096]/90 ${
+                      className={`w-full rounded-xl bg-[#0a1022]/95 border px-4 py-3.5 sm:py-4 text-[16px] sm:text-[17px] md:text-[18px] text-white leading-[1.2] focus:outline-none transition-colors placeholder:text-[#4a6096]/90 ${
                         errors.phone ? "border-red-500" : "border-white/15 focus:border-blue-400 focus:ring-2 focus:ring-blue-500/25"
                       }`}
                       placeholder="+38 (0__) ___ __ __"
@@ -213,7 +213,7 @@ export const BookingModal = ({
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="group relative overflow-hidden w-full rounded-xl border border-blue-300/20 py-4 md:py-5 bg-gradient-to-r from-[#1e5fff] to-[#2a69f0] text-white font-bold text-[11px] tracking-[0.34em] uppercase hover:from-[#3470ff] hover:to-[#3c79ff] transition-all flex items-center justify-center gap-3 disabled:opacity-50 shadow-[0_14px_34px_rgba(36,94,255,0.35)]"
+                    className="group relative overflow-hidden w-full rounded-xl border border-blue-300/20 py-4 md:py-5 bg-gradient-to-r from-[#1e5fff] to-[#2a69f0] text-white font-bold text-[10px] sm:text-[11px] tracking-[0.24em] sm:tracking-[0.34em] uppercase hover:from-[#3470ff] hover:to-[#3c79ff] transition-all flex items-center justify-center gap-3 disabled:opacity-50 shadow-[0_14px_34px_rgba(36,94,255,0.35)]"
                   >
                     <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/35 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                     {isSubmitting ? (
@@ -225,12 +225,12 @@ export const BookingModal = ({
                     )}
                   </button>
 
-                  <div className="inline-flex items-start gap-2 text-[12px] text-gray-400 leading-relaxed">
+                  <div className="inline-flex items-start gap-2 text-[11px] sm:text-[12px] text-gray-400 leading-relaxed">
                     <BadgeCheck className="w-4 h-4 text-blue-300 mt-0.5" />
                     <span>Без прихованих платежів. Узгоджуємо ціну перед стартом робіт.</span>
                   </div>
 
-                  <div className="inline-flex items-start gap-2 text-[12px] text-gray-400 leading-relaxed">
+                  <div className="inline-flex items-start gap-2 text-[11px] sm:text-[12px] text-gray-400 leading-relaxed">
                     <Clock3 className="w-4 h-4 text-blue-300 mt-0.5" />
                     <span>Підтвердження заявки в робочий час до 15 хвилин.</span>
                   </div>
@@ -249,3 +249,4 @@ export const BookingModal = ({
     </AnimatePresence>
   );
 };
+
