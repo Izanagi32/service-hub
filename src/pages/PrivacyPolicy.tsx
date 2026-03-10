@@ -57,11 +57,11 @@ export const PrivacyPolicy = () => {
             </p>
 
             <div className="space-y-3 text-[13px] sm:text-sm">
-              <a href={`mailto:${BUSINESS_INFO.email}`} className="flex items-center gap-3 border border-white/10 px-4 py-3 text-gray-200 hover:border-blue-400 transition-colors">
+              <a href={`mailto:${BUSINESS_INFO.email}`} className="tap-feedback touch-manipulation flex items-center gap-3 border border-white/10 px-4 py-3 text-gray-200 hover:border-blue-400 transition-colors">
                 <Mail className="w-4 h-4 text-blue-300" />
                 {BUSINESS_INFO.email}
               </a>
-              <a href={`tel:${BUSINESS_INFO.phoneE164}`} className="flex items-center gap-3 border border-white/10 px-4 py-3 text-gray-200 hover:border-blue-400 transition-colors">
+              <a href={`tel:${BUSINESS_INFO.phoneE164}`} className="tap-feedback touch-manipulation flex items-center gap-3 border border-white/10 px-4 py-3 text-gray-200 hover:border-blue-400 transition-colors">
                 <Phone className="w-4 h-4 text-blue-300" />
                 {BUSINESS_INFO.phoneDisplay}
               </a>
@@ -95,4 +95,3 @@ export const PrivacyPolicy = () => {
     </div>
   );
 };
-

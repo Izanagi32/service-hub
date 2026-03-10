@@ -121,7 +121,7 @@ export const About = () => {
           </p>
           <Link 
             to="/contact"
-            className="inline-flex items-center gap-3 sm:gap-4 px-7 sm:px-10 md:px-12 py-4 sm:py-5 md:py-6 bg-white text-black font-bold text-[11px] sm:text-xs tracking-[0.22em] sm:tracking-[0.3em] uppercase hover:bg-gray-200 transition-all relative z-10"
+            className="tap-feedback touch-manipulation inline-flex items-center gap-3 sm:gap-4 px-7 sm:px-10 md:px-12 py-4 sm:py-5 md:py-6 bg-white text-black font-bold text-[11px] sm:text-xs tracking-[0.22em] sm:tracking-[0.3em] uppercase hover:bg-gray-200 transition-all relative z-10"
           >
             Зв'язатися з Нами <ArrowRight size={16} />
           </Link>
@@ -130,5 +130,3 @@ export const About = () => {
     </div>
   );
 };
-
-

@@ -35,6 +35,13 @@ export default function App() {
     };
   }, []);
 
+  useEffect(() => {
+    document.body.style.overflow = isModalOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isModalOpen]);
+
   const openModal = (serviceTitle?: string) => {
     setSubmitError("");
     setErrors({});

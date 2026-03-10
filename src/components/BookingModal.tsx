@@ -47,7 +47,7 @@ export const BookingModal = ({
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-2.5 sm:p-6">
+        <div className="fixed inset-0 z-[100] flex items-start sm:items-center justify-center p-2.5 pb-[calc(var(--safe-bottom)+0.5rem)] sm:p-6 sm:pb-6">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -61,7 +61,7 @@ export const BookingModal = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.97, y: 10 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="relative w-full max-w-[1160px] max-h-[calc(100svh-1.25rem)] sm:max-h-[calc(100svh-3rem)] overflow-y-auto md:overflow-hidden rounded-[24px] sm:rounded-[28px] border border-white/12 bg-[#040712]/95 shadow-[0_40px_120px_rgba(0,0,0,0.62)] flex flex-col md:flex-row"
+            className="relative w-full max-w-[1160px] max-h-[calc(100svh-1rem-var(--safe-bottom))] sm:max-h-[calc(100svh-2.5rem-var(--safe-bottom))] overflow-y-auto lg:overflow-hidden rounded-[24px] sm:rounded-[28px] border border-white/12 bg-[#040712]/95 shadow-[0_40px_120px_rgba(0,0,0,0.62)] flex flex-col lg:flex-row"
             role="dialog"
             aria-modal="true"
             aria-labelledby="booking-modal-title"
@@ -70,12 +70,12 @@ export const BookingModal = ({
               onClick={onClose}
               type="button"
               aria-label="Закрити форму запису"
-              className="absolute top-3 right-3 sm:top-5 sm:right-5 z-20 w-10 h-10 sm:w-11 sm:h-11 rounded-lg border border-white/20 bg-black/45 text-white/65 hover:text-white hover:border-white/35 hover:bg-white/10 transition-all flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300/50"
+              className="tap-feedback touch-manipulation absolute top-3 right-3 sm:top-5 sm:right-5 z-20 w-10 h-10 sm:w-11 sm:h-11 rounded-lg border border-white/20 bg-black/45 text-white/65 hover:text-white hover:border-white/35 hover:bg-white/10 transition-all flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300/50"
             >
               <X size={20} />
             </button>
 
-            <aside className="w-full md:w-[43%] p-5 sm:p-7 md:p-10 lg:p-12 relative overflow-hidden bg-[linear-gradient(160deg,#2963ff_0%,#2148b7_56%,#0f1e4d_100%)]">
+            <aside className="w-full lg:w-[43%] p-5 sm:p-7 md:p-9 lg:p-12 relative overflow-hidden bg-[linear-gradient(160deg,#2963ff_0%,#2148b7_56%,#0f1e4d_100%)]">
               <div
                 className="absolute inset-0 pointer-events-none opacity-45"
                 style={{
@@ -91,7 +91,7 @@ export const BookingModal = ({
                   <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl border border-white/25 bg-white/10 flex items-center justify-center mb-5 sm:mb-6 shadow-[0_10px_24px_rgba(0,0,0,0.2)]">
                     <Sparkles className="text-white w-7 h-7" />
                   </div>
-                  <h2 id="booking-modal-title" className="text-3xl sm:text-4xl md:text-5xl font-bold font-display text-white mb-4 leading-[0.95]">
+                  <h2 id="booking-modal-title" className="text-3xl sm:text-4xl lg:text-5xl font-bold font-display text-white mb-4 leading-[0.95]">
                     Запис на візит
                   </h2>
                   <p className="text-blue-50/88 text-base leading-relaxed max-w-md">
@@ -126,7 +126,7 @@ export const BookingModal = ({
               </div>
             </aside>
 
-            <section className="w-full md:w-[57%] p-5 sm:p-7 md:p-10 lg:p-12 bg-[#040712] relative">
+            <section className="w-full lg:w-[57%] p-5 sm:p-7 md:p-9 lg:p-12 bg-[#040712] relative">
               <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top_left,rgba(52,112,255,0.18),transparent_36%)]" />
 
               {isSuccess ? (
@@ -138,7 +138,7 @@ export const BookingModal = ({
                   <div className="w-24 h-24 rounded-full border border-blue-400/50 bg-blue-500/15 flex items-center justify-center mb-7">
                     <CheckCircle2 className="w-12 h-12 text-blue-300" />
                   </div>
-                  <h3 className="text-3xl md:text-4xl font-bold font-display text-white mb-4">Дякуємо!</h3>
+                  <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold font-display text-white mb-4">Дякуємо!</h3>
                   <p className="text-gray-300 text-base leading-relaxed max-w-md">
                     Ваш запит успішно відправлено. Менеджер зв'яжеться з вами найближчим часом для підтвердження візиту.
                   </p>
@@ -146,7 +146,7 @@ export const BookingModal = ({
               ) : (
                 <form onSubmit={handleBookingSubmit} className="relative z-10 space-y-5 sm:space-y-6">
                   <div className="space-y-2">
-                    <label htmlFor="booking-service" className="text-[11px] font-bold uppercase tracking-[0.22em] text-gray-400">
+                    <label htmlFor="booking-service" className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400">
                       Послуга
                     </label>
                     <div className="relative">
@@ -156,7 +156,7 @@ export const BookingModal = ({
                         onChange={(e) => {
                           setFormData({ ...formData, service: e.target.value });
                         }}
-                        className="w-full rounded-xl bg-[#0a1022]/95 border border-white/15 px-4 py-3.5 sm:py-4 pr-12 text-white text-[16px] sm:text-[17px] md:text-[18px] leading-[1.2] font-medium focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-500/25 transition-colors appearance-none"
+                        className="w-full rounded-xl bg-[#0a1022]/95 border border-white/15 px-4 py-3.5 sm:py-4 pr-12 text-white text-[16px] sm:text-[16px] md:text-[17px] leading-[1.2] font-medium focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-500/25 transition-colors appearance-none"
                       >
                         {services.map((service) => (
                           <option key={service.id} value={service.title} className="bg-[#06080f] text-white">
@@ -169,7 +169,7 @@ export const BookingModal = ({
                   </div>
 
                   <div className="space-y-2">
-                    <label htmlFor="booking-name" className="text-[11px] font-bold uppercase tracking-[0.22em] text-gray-400">
+                    <label htmlFor="booking-name" className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400">
                       Ваше ім'я
                     </label>
                     <input
@@ -181,7 +181,7 @@ export const BookingModal = ({
                       aria-invalid={Boolean(errors.name)}
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className={`w-full rounded-xl bg-[#0a1022]/95 border px-4 py-3.5 sm:py-4 text-white text-[16px] sm:text-[17px] md:text-[18px] leading-[1.2] focus:outline-none transition-colors placeholder:text-[#4a6096]/90 ${
+                      className={`w-full rounded-xl bg-[#0a1022]/95 border px-4 py-3.5 sm:py-4 text-white text-[16px] sm:text-[16px] md:text-[17px] leading-[1.2] focus:outline-none transition-colors placeholder:text-[#4a6096]/90 ${
                         errors.name ? "border-red-500" : "border-white/15 focus:border-blue-400 focus:ring-2 focus:ring-blue-500/25"
                       }`}
                       placeholder="Олександр"
@@ -190,19 +190,20 @@ export const BookingModal = ({
                   </div>
 
                   <div className="space-y-2">
-                    <label htmlFor="booking-phone" className="text-[11px] font-bold uppercase tracking-[0.22em] text-gray-400">
+                    <label htmlFor="booking-phone" className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400">
                       Телефон
                     </label>
                     <input
                       id="booking-phone"
                       name="phone"
                       type="tel"
+                      inputMode="tel"
                       autoComplete="tel"
                       required
                       aria-invalid={Boolean(errors.phone)}
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className={`w-full rounded-xl bg-[#0a1022]/95 border px-4 py-3.5 sm:py-4 text-[16px] sm:text-[17px] md:text-[18px] text-white leading-[1.2] focus:outline-none transition-colors placeholder:text-[#4a6096]/90 ${
+                      className={`w-full rounded-xl bg-[#0a1022]/95 border px-4 py-3.5 sm:py-4 text-[16px] sm:text-[16px] md:text-[17px] text-white leading-[1.2] focus:outline-none transition-colors placeholder:text-[#4a6096]/90 ${
                         errors.phone ? "border-red-500" : "border-white/15 focus:border-blue-400 focus:ring-2 focus:ring-blue-500/25"
                       }`}
                       placeholder="+38 (0__) ___ __ __"
@@ -213,7 +214,7 @@ export const BookingModal = ({
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="group relative overflow-hidden w-full rounded-xl border border-blue-300/20 py-4 md:py-5 bg-gradient-to-r from-[#1e5fff] to-[#2a69f0] text-white font-bold text-[10px] sm:text-[11px] tracking-[0.24em] sm:tracking-[0.34em] uppercase hover:from-[#3470ff] hover:to-[#3c79ff] transition-all flex items-center justify-center gap-3 disabled:opacity-50 shadow-[0_14px_34px_rgba(36,94,255,0.35)]"
+                    className="tap-feedback touch-manipulation group relative overflow-hidden w-full rounded-xl border border-blue-300/20 py-4 md:py-5 bg-gradient-to-r from-[#1e5fff] to-[#2a69f0] text-white font-bold text-[10px] sm:text-[11px] tracking-[0.2em] sm:tracking-[0.28em] uppercase hover:from-[#3470ff] hover:to-[#3c79ff] transition-all flex items-center justify-center gap-3 disabled:opacity-50 shadow-[0_14px_34px_rgba(36,94,255,0.35)]"
                   >
                     <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/35 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                     {isSubmitting ? (
@@ -249,4 +250,3 @@ export const BookingModal = ({
     </AnimatePresence>
   );
 };
-

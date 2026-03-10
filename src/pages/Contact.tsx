@@ -109,7 +109,7 @@ export const Contact = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-14 lg:gap-20">
           <motion.div {...fadeInUp}>
-            <div className="space-y-6 sm:space-y-8 sm:space-y-10 md:space-y-12">
+            <div className="space-y-6 sm:space-y-10 md:space-y-12">
               {[
                 {
                   icon: <MapPin className="w-8 h-8" />,
@@ -204,7 +204,7 @@ export const Contact = () => {
               <button
                 type="submit"
                 disabled={isContactSubmitting}
-                className="w-full py-4 sm:py-5 bg-blue-600 text-white font-bold text-[11px] sm:text-xs tracking-[0.28em] sm:tracking-[0.4em] uppercase hover:bg-white hover:text-black transition-all flex items-center justify-center gap-4 group disabled:opacity-50"
+                className="tap-feedback touch-manipulation w-full py-4 sm:py-5 bg-blue-600 text-white font-bold text-[11px] sm:text-xs tracking-[0.28em] sm:tracking-[0.4em] uppercase hover:bg-white hover:text-black transition-all flex items-center justify-center gap-4 group disabled:opacity-50"
               >
                 {isContactSubmitting ? (
                   <div className="w-5 h-5 border-2 border-white border-t-transparent animate-spin" />
@@ -236,7 +236,7 @@ export const Contact = () => {
                   <button
                     type="button"
                     onClick={() => setIsContactSuccess(false)}
-                    className="mt-12 text-blue-500 text-[10px] font-bold uppercase tracking-[0.3em] hover:text-white transition-colors"
+                    className="tap-feedback touch-manipulation mt-12 text-blue-500 text-[10px] font-bold uppercase tracking-[0.3em] hover:text-white transition-colors"
                   >
                     Надіслати ще одне
                   </button>
@@ -249,4 +249,3 @@ export const Contact = () => {
     </div>
   );
 };
-

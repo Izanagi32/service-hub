@@ -158,7 +158,7 @@ export const Services = ({ openModal }: ServicesProps) => {
               <span className="w-8 h-px bg-[#d5b57a]/80" />
               Преміальна Лінійка
             </span>
-            <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold font-display text-white mb-5 sm:mb-6 leading-[0.92]">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold font-display text-white mb-5 sm:mb-6 leading-[0.92]">
               Еталонний <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f4e4bf] via-[#d5b57a] to-[#b9904d]">Догляд</span>
             </h1>
@@ -172,7 +172,7 @@ export const Services = ({ openModal }: ServicesProps) => {
               type="button"
               onClick={() => scroll('left')}
               aria-label="Попередня послуга"
-              className="w-11 h-11 sm:w-14 sm:h-14 border border-[#d5b57a]/35 text-[#d5b57a] flex items-center justify-center hover:bg-[#d5b57a] hover:text-black transition-all group"
+              className="tap-feedback touch-manipulation w-11 h-11 sm:w-14 sm:h-14 border border-[#d5b57a]/35 text-[#d5b57a] flex items-center justify-center hover:bg-[#d5b57a] hover:text-black transition-all group"
             >
               <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 group-hover:-translate-x-1 transition-transform" />
             </button>
@@ -180,7 +180,7 @@ export const Services = ({ openModal }: ServicesProps) => {
               type="button"
               onClick={() => scroll('right')}
               aria-label="Наступна послуга"
-              className="w-11 h-11 sm:w-14 sm:h-14 border border-[#d5b57a]/35 text-[#d5b57a] flex items-center justify-center hover:bg-[#d5b57a] hover:text-black transition-all group"
+              className="tap-feedback touch-manipulation w-11 h-11 sm:w-14 sm:h-14 border border-[#d5b57a]/35 text-[#d5b57a] flex items-center justify-center hover:bg-[#d5b57a] hover:text-black transition-all group"
             >
               <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-1 transition-transform" />
             </button>
@@ -223,7 +223,7 @@ export const Services = ({ openModal }: ServicesProps) => {
                     <span className="text-xs font-bold text-white">#{activeService.id}</span>
                   </div>
 
-                  <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold font-display text-white mb-4 sm:mb-5 leading-tight">
+                  <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold font-display text-white mb-4 sm:mb-5 leading-tight">
                     {activeService.title}
                   </h2>
                   <p className="text-gray-100 text-sm sm:text-base leading-relaxed max-w-2xl mb-8 sm:mb-10">
@@ -242,7 +242,7 @@ export const Services = ({ openModal }: ServicesProps) => {
                   <button
                     type="button"
                     onClick={() => openModal(activeService.title)}
-                    className="relative overflow-hidden w-full sm:w-auto px-10 py-5 bg-[#d5b57a] text-black font-bold text-xs tracking-[0.3em] uppercase hover:bg-[#e6cc95] transition-all inline-flex items-center justify-center group/btn focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#e6cc95] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                    className="tap-feedback touch-manipulation relative overflow-hidden w-full sm:w-auto px-10 py-5 bg-[#d5b57a] text-black font-bold text-xs tracking-[0.3em] uppercase hover:bg-[#e6cc95] transition-all inline-flex items-center justify-center group/btn focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#e6cc95] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                   >
                     <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700" />
                     <span className="relative inline-flex items-center gap-4">
@@ -272,7 +272,7 @@ export const Services = ({ openModal }: ServicesProps) => {
                     <button
                       type="button"
                       onClick={() => setActiveVideo(activeService.video!)}
-                      className="w-full p-5 sm:p-6 border border-[#d5b57a]/25 bg-[#d5b57a]/8 hover:bg-[#d5b57a]/16 transition-all text-left group/play"
+                      className="tap-feedback touch-manipulation w-full p-5 sm:p-6 border border-[#d5b57a]/25 bg-[#d5b57a]/8 hover:bg-[#d5b57a]/16 transition-all text-left group/play"
                     >
                       <div className="flex items-center justify-between gap-4">
                         <div>
@@ -291,7 +291,7 @@ export const Services = ({ openModal }: ServicesProps) => {
           </AnimatePresence>
 
           <div className="mt-8">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 sm:gap-4">
               {services.map((service, index) => {
                 const isActive = index === normalizedIndex;
                 const imageCandidates = getImageCandidates(service.image, index);
@@ -303,7 +303,7 @@ export const Services = ({ openModal }: ServicesProps) => {
                     key={service.id}
                     type="button"
                     onClick={() => updateCarousel(index)}
-                    className={`relative h-[132px] sm:h-[144px] overflow-hidden border transition-all text-left ${
+                    className={`tap-feedback touch-manipulation relative h-[128px] sm:h-[140px] md:h-[148px] overflow-hidden border transition-all text-left ${
                       isActive
                         ? 'border-[#d5b57a] shadow-[0_16px_34px_rgba(213,181,122,0.25)]'
                         : 'border-white/10 hover:border-[#d5b57a]/45'
@@ -368,20 +368,20 @@ export const Services = ({ openModal }: ServicesProps) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 md:p-8 bg-black/95 backdrop-blur-xl"
+            className="fixed inset-0 z-[100] flex items-center justify-center p-3 pb-[calc(var(--safe-bottom)+0.5rem)] sm:p-4 md:p-8 bg-black/95 backdrop-blur-xl"
             onClick={() => setActiveVideo(null)}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="relative w-full max-w-5xl aspect-video bg-black shadow-2xl border border-[#d5b57a]/25 rounded-lg overflow-hidden"
+              className="relative w-full max-w-5xl aspect-video max-h-[82svh] bg-black shadow-2xl border border-[#d5b57a]/25 rounded-lg overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
               <button
                 type="button"
                 onClick={() => setActiveVideo(null)}
-                className="absolute top-2 right-2 sm:top-3 sm:right-3 z-10 px-3 py-2 border border-[#d5b57a]/35 bg-black/60 text-[#d5b57a] hover:text-white flex items-center gap-2 text-[10px] sm:text-xs uppercase tracking-[0.18em] sm:tracking-[0.2em] transition-colors"
+                className="tap-feedback touch-manipulation absolute top-2 right-2 sm:top-3 sm:right-3 z-10 px-3 py-2 border border-[#d5b57a]/35 bg-black/60 text-[#d5b57a] hover:text-white flex items-center gap-2 text-[10px] sm:text-xs uppercase tracking-[0.18em] sm:tracking-[0.2em] transition-colors"
               >
                 Закрити <X size={20} />
               </button>
@@ -399,5 +399,3 @@ export const Services = ({ openModal }: ServicesProps) => {
     </div>
   );
 };
-
-

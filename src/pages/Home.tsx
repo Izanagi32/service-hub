@@ -1,4 +1,4 @@
-import { useState, useRef, SyntheticEvent } from 'react';
+import { useState, useRef, useEffect, useCallback, SyntheticEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Star, 
@@ -70,12 +70,24 @@ export const Home = () => {
     target.src = portfolioFallbackImage;
   };
 
-  const getCardWidth = () => {
+  const getCardWidth = useCallback(() => {
     if (trackRef.current && trackRef.current.firstElementChild) {
-      return (trackRef.current.firstElementChild as HTMLElement).offsetWidth + 24;
+      const firstCard = trackRef.current.firstElementChild as HTMLElement;
+      const trackStyles = window.getComputedStyle(trackRef.current);
+      const gap = Number.parseFloat(trackStyles.columnGap || trackStyles.gap || "0");
+      return firstCard.offsetWidth + (Number.isNaN(gap) ? 0 : gap);
     }
-    return window.innerWidth > 768 ? 724 : window.innerWidth * 0.85 + 24;
-  };
+
+    if (window.innerWidth >= 1024) {
+      return window.innerWidth * 0.78;
+    }
+
+    if (window.innerWidth >= 640) {
+      return window.innerWidth * 0.84;
+    }
+
+    return window.innerWidth * 0.9;
+  }, []);
 
   const scroll = (direction: 'left' | 'right') => {
     const cardWidth = getCardWidth();
@@ -122,6 +134,26 @@ export const Home = () => {
   const toggleFaq = (index: number) => {
     setOpenFaqIndex((prev) => (prev === index ? -1 : index));
   };
+
+  useEffect(() => {
+    const syncCarouselPosition = () => {
+      const nextX = -carouselIndex * getCardWidth();
+      setDragX((prev) => (Math.abs(prev - nextX) < 0.5 ? prev : nextX));
+    };
+
+    const handleViewportChange = () => {
+      window.requestAnimationFrame(syncCarouselPosition);
+    };
+
+    syncCarouselPosition();
+    window.addEventListener('resize', handleViewportChange);
+    window.addEventListener('orientationchange', handleViewportChange);
+
+    return () => {
+      window.removeEventListener('resize', handleViewportChange);
+      window.removeEventListener('orientationchange', handleViewportChange);
+    };
+  }, [carouselIndex, getCardWidth]);
 
   return (
     <>
@@ -191,7 +223,7 @@ export const Home = () => {
               <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-gray-300">Преміальний догляд за авто</span>
             </div>
             
-            <h1 className="text-[2.2rem] sm:text-5xl md:text-7xl lg:text-8xl font-bold font-display mb-6 sm:mb-8 tracking-tighter text-white leading-[0.92]">
+            <h1 className="text-[2.2rem] sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold font-display mb-6 sm:mb-8 tracking-tighter text-white leading-[0.92]">
               ДОСКОНАЛІСТЬ <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500">
                 У ДЕТАЛЯХ
@@ -206,14 +238,14 @@ export const Home = () => {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full sm:w-auto">
               <Link 
                 to="/services"
-                className="group relative w-full sm:w-auto px-7 sm:px-10 py-4 sm:py-5 bg-blue-600 overflow-hidden"
+                className="group tap-feedback relative w-full sm:w-auto px-7 sm:px-10 py-4 sm:py-5 bg-blue-600 overflow-hidden touch-manipulation"
               >
                 <div className="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
                 <span className="relative text-white group-hover:text-black font-bold text-xs tracking-[0.3em] uppercase transition-colors">Наші Послуги</span>
               </Link>
               <Link 
                 to="/contact"
-                className="group w-full sm:w-auto px-7 sm:px-10 py-4 sm:py-5 border border-white/20 hover:border-white transition-all"
+                className="group tap-feedback w-full sm:w-auto px-7 sm:px-10 py-4 sm:py-5 border border-white/20 hover:border-white transition-all touch-manipulation"
               >
                 <span className="text-white font-bold text-xs tracking-[0.3em] uppercase">Консультація</span>
               </Link>
@@ -343,7 +375,7 @@ export const Home = () => {
           <motion.div {...fadeInUp} className="mb-12 sm:mb-16 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 sm:gap-8 max-w-7xl mx-auto">
             <div className="max-w-xl">
               <span className="text-blue-500 text-xs font-bold tracking-[0.2em] uppercase mb-4 block">Портфоліо</span>
-              <h2 className="text-3xl sm:text-5xl md:text-7xl font-bold font-display text-white mb-5 sm:mb-6 leading-[0.92]">
+              <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold font-display text-white mb-5 sm:mb-6 leading-[0.92]">
                 Мистецтво <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-600">Деталей</span>
               </h2>
@@ -368,14 +400,14 @@ export const Home = () => {
               <div className="flex gap-3 sm:gap-4">
                 <button 
                   onClick={() => scroll('left')}
-                  className="w-12 h-12 sm:w-16 sm:h-16 border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-white group"
+                  className="tap-feedback touch-manipulation w-12 h-12 sm:w-16 sm:h-16 border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-white group"
                   disabled={carouselIndex === 0}
                 >
                   <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 group-hover:-translate-x-1 transition-transform" />
                 </button>
                 <button 
                   onClick={() => scroll('right')}
-                  className="w-12 h-12 sm:w-16 sm:h-16 border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-white group"
+                  className="tap-feedback touch-manipulation w-12 h-12 sm:w-16 sm:h-16 border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-white group"
                   disabled={carouselIndex === portfolioItems.length - 1}
                 >
                   <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-1 transition-transform" />
@@ -384,7 +416,7 @@ export const Home = () => {
             </div>
           </motion.div>
 
-          <div className="relative overflow-visible cursor-grab active:cursor-grabbing px-[4vw] sm:px-[5vw]">
+          <div className="relative overflow-visible cursor-grab active:cursor-grabbing touch-pan-y px-[4vw] sm:px-[5vw]">
             <motion.div 
               ref={trackRef}
               drag="x"
@@ -407,7 +439,7 @@ export const Home = () => {
                       scale: isActive ? 1 : 0.95,
                       opacity: isActive ? 1 : 0.4,
                     }}
-                    className="min-w-[88vw] sm:min-w-[82vw] md:min-w-[700px] lg:min-w-[800px] aspect-[16/9] relative group overflow-hidden border border-white/5 bg-white/5"
+                    className="min-w-[88vw] sm:min-w-[82vw] md:min-w-[74vw] lg:min-w-[760px] xl:min-w-[820px] aspect-[16/9] relative group overflow-hidden border border-white/5 bg-white/5"
                   >
                     <div className="absolute inset-0">
                       <img
@@ -491,7 +523,7 @@ export const Home = () => {
             </div>
             
             <div className="lg:col-span-2 relative">
-              <div className="relative h-[420px] sm:h-[380px] md:h-[350px]">
+              <div className="relative h-[460px] sm:h-[400px] md:h-[360px] lg:h-[350px]">
                 <AnimatePresence mode="wait">
                   <motion.div 
                     key={testimonialIndex}
@@ -523,13 +555,13 @@ export const Home = () => {
               <div className="flex gap-3 sm:gap-4 mt-8">
                 <button 
                   onClick={prevTestimonial}
-                  className="w-11 h-11 sm:w-14 sm:h-14 border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all group"
+                  className="tap-feedback touch-manipulation w-11 h-11 sm:w-14 sm:h-14 border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all group"
                 >
                   <ChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
                 </button>
                 <button 
                   onClick={nextTestimonial}
-                  className="w-11 h-11 sm:w-14 sm:h-14 border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all group"
+                  className="tap-feedback touch-manipulation w-11 h-11 sm:w-14 sm:h-14 border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all group"
                 >
                   <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </button>
@@ -584,13 +616,13 @@ export const Home = () => {
               <div className="space-y-3">
                 <Link
                   to="/contact"
-                  className="w-full inline-flex items-center justify-center gap-3 px-5 sm:px-6 py-4 bg-blue-600 text-white text-[11px] sm:text-xs font-bold uppercase tracking-[0.2em] sm:tracking-[0.22em] hover:bg-white hover:text-black transition-all"
+                  className="tap-feedback touch-manipulation w-full inline-flex items-center justify-center gap-3 px-5 sm:px-6 py-4 bg-blue-600 text-white text-[11px] sm:text-xs font-bold uppercase tracking-[0.2em] sm:tracking-[0.22em] hover:bg-white hover:text-black transition-all"
                 >
                   Поставити питання <ArrowRight size={14} />
                 </Link>
                 <a
                   href={`tel:${BUSINESS_INFO.phoneE164}`}
-                  className="w-full inline-flex items-center justify-center border border-white/15 px-5 sm:px-6 py-4 text-[11px] sm:text-xs font-bold uppercase tracking-[0.2em] sm:tracking-[0.22em] text-gray-200 hover:border-blue-400 hover:text-white transition-all"
+                  className="tap-feedback touch-manipulation w-full inline-flex items-center justify-center border border-white/15 px-5 sm:px-6 py-4 text-[11px] sm:text-xs font-bold uppercase tracking-[0.2em] sm:tracking-[0.22em] text-gray-200 hover:border-blue-400 hover:text-white transition-all"
                 >
                   Зателефонувати
                 </a>
@@ -614,7 +646,7 @@ export const Home = () => {
                       onClick={() => toggleFaq(i)}
                       aria-expanded={isOpen}
                       aria-controls={`faq-answer-${i}`}
-                      className="w-full p-4 sm:p-6 md:p-7 text-left flex items-center justify-between gap-4"
+                      className="tap-feedback touch-manipulation w-full p-4 sm:p-6 md:p-7 text-left flex items-center justify-between gap-4"
                     >
                       <span className={`font-display text-base sm:text-lg md:text-xl leading-snug ${isOpen ? 'text-white' : 'text-gray-100'}`}>
                         {faq.question}
@@ -653,6 +685,3 @@ export const Home = () => {
     </>
   );
 };
-
-
-

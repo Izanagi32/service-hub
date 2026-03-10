@@ -57,11 +57,11 @@ export const TermsOfService = () => {
             </p>
 
             <div className="space-y-3 text-[13px] sm:text-sm">
-              <a href={`mailto:${BUSINESS_INFO.email}`} className="flex items-center gap-3 border border-white/10 px-4 py-3 text-gray-200 hover:border-[#d5b57a]/45 transition-colors">
+              <a href={`mailto:${BUSINESS_INFO.email}`} className="tap-feedback touch-manipulation flex items-center gap-3 border border-white/10 px-4 py-3 text-gray-200 hover:border-[#d5b57a]/45 transition-colors">
                 <Mail className="w-4 h-4 text-[#d5b57a]" />
                 {BUSINESS_INFO.email}
               </a>
-              <a href={`tel:${BUSINESS_INFO.phoneE164}`} className="flex items-center gap-3 border border-white/10 px-4 py-3 text-gray-200 hover:border-[#d5b57a]/45 transition-colors">
+              <a href={`tel:${BUSINESS_INFO.phoneE164}`} className="tap-feedback touch-manipulation flex items-center gap-3 border border-white/10 px-4 py-3 text-gray-200 hover:border-[#d5b57a]/45 transition-colors">
                 <Phone className="w-4 h-4 text-[#d5b57a]" />
                 {BUSINESS_INFO.phoneDisplay}
               </a>
@@ -94,4 +94,3 @@ export const TermsOfService = () => {
     </div>
   );
 };
-
