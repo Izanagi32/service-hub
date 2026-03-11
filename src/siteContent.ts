@@ -13,4 +13,5 @@ export const BUSINESS_INFO = {
   workingHoursFull: "Пн-Сб: 09:00 - 20:00, Нд: за попереднім записом",
   instagramUrl: "https://www.instagram.com/hubservice",
   facebookUrl: "https://www.facebook.com/hubservice",
+  mapsUrl: "https://maps.app.goo.gl/Jpm5GDXnnsxSL3ih9",
 } as const;

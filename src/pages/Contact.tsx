@@ -87,6 +87,7 @@ export const Contact = () => {
             name: BUSINESS_INFO.brand,
             telephone: BUSINESS_INFO.phoneE164,
             email: BUSINESS_INFO.email,
+            hasMap: BUSINESS_INFO.mapsUrl,
             address: {
               "@type": "PostalAddress",
               streetAddress: BUSINESS_INFO.addressLine,
@@ -132,14 +133,23 @@ export const Contact = () => {
               ))}
             </div>
 
-            <div className="mt-10 sm:mt-14 md:mt-16 aspect-video bg-white/[0.02] border border-white/5 relative overflow-hidden group rounded-lg">
+            <a
+              href={BUSINESS_INFO.mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-10 sm:mt-14 md:mt-16 aspect-video bg-white/[0.02] border border-white/5 relative overflow-hidden group rounded-lg block"
+              aria-label="Open location in Google Maps"
+            >
               <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?q=80&w=2300&auto=format&fit=crop')] grayscale opacity-30 group-hover:opacity-50 transition-opacity duration-700" />
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="bg-blue-600 p-4 rounded-none shadow-2xl">
+                <div className="bg-blue-600 p-4 rounded-none shadow-2xl group-hover:scale-105 transition-transform">
                   <MapPin className="w-8 h-8 text-white" />
                 </div>
               </div>
-            </div>
+              <div className="absolute bottom-4 left-4 right-4 text-center text-white text-xs uppercase tracking-[0.2em] font-bold bg-black/40 border border-white/10 py-2">
+                Open in Google Maps
+              </div>
+            </a>
           </motion.div>
 
           <motion.div
