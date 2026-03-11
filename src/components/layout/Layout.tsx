@@ -26,6 +26,25 @@ export const Layout = ({ children, openModal }: LayoutProps) => {
     setIsMenuOpen(false);
   }, [location.pathname]);
 
+  useEffect(() => {
+    document.body.style.overflow = isMenuOpen ? "hidden" : "";
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsMenuOpen(false);
+      }
+    };
+
+    if (isMenuOpen) {
+      window.addEventListener("keydown", onKeyDown);
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [isMenuOpen]);
+
   const navItems = [
     { name: "Головна", path: "/" },
     { name: "Послуги", path: "/services" },
@@ -110,37 +129,97 @@ export const Layout = ({ children, openModal }: LayoutProps) => {
 
         <AnimatePresence>
           {isMenuOpen && (
-            <motion.div
-              id="mobile-main-menu"
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              className="md:hidden mt-2 mx-auto max-w-7xl rounded-lg border border-white/15 bg-[#070a10]/95 backdrop-blur-xl shadow-[0_14px_28px_rgba(0,0,0,0.45)] max-h-[calc(100svh-112px-var(--safe-bottom))] overflow-y-auto pb-[max(var(--safe-bottom),0.5rem)]"
-            >
-              <div className="p-4 space-y-1">
-                {navItems.map((item) => (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    className={`tap-feedback touch-manipulation block rounded-lg px-4 py-3 text-sm font-medium tracking-[0.12em] uppercase transition-colors ${
-                      location.pathname === item.path ? "text-[#d5b57a] bg-white/5" : "text-gray-300 hover:text-white hover:bg-white/5"
-                    }`}
-                  >
-                    {item.name}
-                  </Link>
-                ))}
-                <button
-                  type="button"
-                  onClick={() => {
-                    openModal();
-                    setIsMenuOpen(false);
-                  }}
-                  className="tap-feedback touch-manipulation w-full mt-3 rounded-lg border border-[#d5b57a]/35 bg-gradient-to-r from-[#1d2b42] to-[#23344f] px-4 py-3 text-[11px] font-bold tracking-[0.16em] uppercase"
-                >
-                  Записатися
-                </button>
-              </div>
-            </motion.div>
+            <>
+              <motion.button
+                type="button"
+                aria-label="Close menu overlay"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.22 }}
+                className="md:hidden fixed inset-0 z-40 bg-black/72 backdrop-blur-[2px]"
+                onClick={() => setIsMenuOpen(false)}
+              />
+
+              <motion.aside
+                id="mobile-main-menu"
+                initial={{ x: "100%", opacity: 0.95 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: "100%", opacity: 0.95 }}
+                transition={{ type: "spring", stiffness: 280, damping: 30 }}
+                className="md:hidden fixed right-0 top-0 z-50 h-[100svh] w-[88vw] max-w-[390px] border-l border-white/15 bg-[#060a12]/96 backdrop-blur-xl shadow-[-18px_0_50px_rgba(0,0,0,0.55)]"
+              >
+                <div className="h-full flex flex-col">
+                  <div className="px-4 pt-[calc(var(--safe-top)+1rem)] pb-4 border-b border-white/10">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="inline-flex items-center gap-3 min-w-0">
+                        <img src={logoSrc} alt={BUSINESS_INFO.brand} className="h-10 w-10 rounded-full border border-white/15 object-cover" />
+                        <div className="min-w-0">
+                          <div className="text-[11px] tracking-[0.2em] uppercase text-white font-semibold truncate">HubService</div>
+                          <div className="text-[9px] tracking-[0.18em] uppercase text-gray-400 mt-1 truncate">Premium Auto Care</div>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        aria-label="Close menu"
+                        onClick={() => setIsMenuOpen(false)}
+                        className="tap-feedback touch-manipulation p-2.5 rounded-md border border-white/15 text-white/90 hover:text-white hover:border-white/35 transition-colors"
+                      >
+                        <X size={22} />
+                      </button>
+                    </div>
+                  </div>
+
+                  <nav className="px-3 py-3 overflow-y-auto flex-1">
+                    {navItems.map((item, index) => (
+                      <Link
+                        key={item.path}
+                        to={item.path}
+                        className={`tap-feedback touch-manipulation group flex items-center justify-between rounded-lg px-3.5 py-4 text-sm font-semibold tracking-[0.12em] uppercase transition-colors ${
+                          location.pathname === item.path
+                            ? "text-[#d5b57a] bg-white/5 border border-[#d5b57a]/25"
+                            : "text-gray-200 hover:text-white hover:bg-white/5 border border-transparent"
+                        }`}
+                      >
+                        <span>{item.name}</span>
+                        <span className="text-[10px] text-gray-500 group-hover:text-[#d5b57a] transition-colors">0{index + 1}</span>
+                      </Link>
+                    ))}
+                  </nav>
+
+                  <div className="px-4 pb-[max(var(--safe-bottom),1rem)] pt-3 border-t border-white/10 space-y-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        openModal();
+                        setIsMenuOpen(false);
+                      }}
+                      className="tap-feedback touch-manipulation w-full rounded-lg border border-[#d5b57a]/35 bg-gradient-to-r from-[#1d2b42] to-[#23344f] px-4 py-4 text-[11px] font-bold tracking-[0.18em] uppercase"
+                    >
+                      Записатися
+                    </button>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <a
+                        href={`tel:${BUSINESS_INFO.phoneE164}`}
+                        className="tap-feedback touch-manipulation rounded-lg border border-white/10 bg-white/[0.02] px-3 py-3 text-[10px] font-semibold tracking-[0.14em] uppercase text-gray-200 text-center"
+                      >
+                        Call
+                      </a>
+                      <a
+                        href={BUSINESS_INFO.mapsUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="tap-feedback touch-manipulation rounded-lg border border-white/10 bg-white/[0.02] px-3 py-3 text-[10px] font-semibold tracking-[0.14em] uppercase text-gray-200 text-center"
+                      >
+                        Maps
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </motion.aside>
+            </>
           )}
         </AnimatePresence>
       </header>
