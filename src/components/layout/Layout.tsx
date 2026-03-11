@@ -205,7 +205,7 @@ export const Layout = ({ children, openModal }: LayoutProps) => {
                         href={`tel:${BUSINESS_INFO.phoneE164}`}
                         className="tap-feedback touch-manipulation rounded-lg border border-white/10 bg-white/[0.02] px-3 py-3 text-[10px] font-semibold tracking-[0.14em] uppercase text-gray-200 text-center"
                       >
-                        Call
+                        ???????
                       </a>
                       <a
                         href={BUSINESS_INFO.mapsUrl}
@@ -213,7 +213,7 @@ export const Layout = ({ children, openModal }: LayoutProps) => {
                         rel="noopener noreferrer"
                         className="tap-feedback touch-manipulation rounded-lg border border-white/10 bg-white/[0.02] px-3 py-3 text-[10px] font-semibold tracking-[0.14em] uppercase text-gray-200 text-center"
                       >
-                        Maps
+                        ?????
                       </a>
                     </div>
                   </div>

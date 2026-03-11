@@ -21,8 +21,6 @@ export const env = {
   gaMeasurementId: getOptionalString(import.meta.env.VITE_GA_MEASUREMENT_ID),
   bookingWebhookUrl: getOptionalString(import.meta.env.VITE_BOOKING_WEBHOOK_URL),
   contactWebhookUrl: getOptionalString(import.meta.env.VITE_CONTACT_WEBHOOK_URL),
-  telegramBotToken: getOptionalString(import.meta.env.VITE_TELEGRAM_BOT_TOKEN),
-  telegramChatId: getOptionalString(import.meta.env.VITE_TELEGRAM_CHAT_ID),
 };
 
 export const absoluteSiteUrl = (path = "/"): string => {
