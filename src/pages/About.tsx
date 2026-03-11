@@ -93,15 +93,15 @@ export const About = () => {
               <div className="col-span-2 aspect-[16/10] overflow-hidden border border-white/10">
                 <img
                   src={`${import.meta.env.BASE_URL}hero-bg.jpg`}
-                  alt="Локація HubService"
+                  alt="HubService location"
                   className="w-full h-full object-cover"
                 />
               </div>
 
               <div className="aspect-[4/5] overflow-hidden border border-white/10">
                 <img
-                  src="https://images.unsplash.com/photo-1601362840469-51e4d8d58785?q=80&w=1200&auto=format&fit=crop"
-                  alt="Detailing quality"
+                  src={`${import.meta.env.BASE_URL}photo-garage.jpg`}
+                  alt="HubService location detail"
                   className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
                   referrerPolicy="no-referrer"
                 />
@@ -109,8 +109,8 @@ export const About = () => {
 
               <div className="aspect-[4/5] overflow-hidden border border-white/10">
                 <img
-                  src="https://images.unsplash.com/photo-1549399542-7e3f8b79c341?q=80&w=1200&auto=format&fit=crop"
-                  alt="Premium service"
+                  src={`${import.meta.env.BASE_URL}truck-wash.jpg`}
+                  alt="Truck wash service"
                   className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
                   referrerPolicy="no-referrer"
                 />
