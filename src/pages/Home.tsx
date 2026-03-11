@@ -165,7 +165,7 @@ export const Home = () => {
           "@context": "https://schema.org",
           "@type": "AutoBodyShop",
           "name": "HubService",
-          "image": "https://images.unsplash.com/photo-1617788138017-80ad40651399?q=80&w=1200&auto=format&fit=crop",
+          "image": `${BUSINESS_INFO.siteUrl}${import.meta.env.BASE_URL}hero-bg.jpg`,
           "@id": BUSINESS_INFO.siteUrl,
           "url": BUSINESS_INFO.siteUrl,
           "telephone": BUSINESS_INFO.phoneE164,
@@ -206,7 +206,7 @@ export const Home = () => {
           <div className="absolute inset-0 bg-black/60 z-10" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent z-20" />
           <img 
-            src="https://images.unsplash.com/photo-1617788138017-80ad40651399?q=80&w=2940&auto=format&fit=crop" 
+            src={`${import.meta.env.BASE_URL}hero-bg.jpg`} 
             alt="Преміальний автомобіль" 
             className="w-full h-full object-cover scale-105"
           />
