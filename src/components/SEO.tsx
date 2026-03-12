@@ -25,7 +25,7 @@ export const SEO = ({
   const siteTitle = "HubService | Автосервіс у Горохові";
   const fullTitle = `${title} | ${siteTitle}`;
   const canonicalUrl = url ? absoluteSiteUrl(url) : absoluteSiteUrl(location.pathname);
-  const ogImage = image ? absoluteSiteUrl(image) : absoluteSiteUrl(`${import.meta.env.BASE_URL}logo.png`);
+  const ogImage = image ? absoluteSiteUrl(image) : absoluteSiteUrl(`${import.meta.env.BASE_URL}hero-bg.jpg`);
 
   return (
     <Helmet>
@@ -51,3 +51,5 @@ export const SEO = ({
     </Helmet>
   );
 };
+
+

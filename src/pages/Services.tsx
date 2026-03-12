@@ -31,7 +31,7 @@ export const Services = ({ openModal }: ServicesProps) => {
   const servicesCount = services.length;
   const normalizedIndex = servicesCount > 0 ? ((activeIndex % servicesCount) + servicesCount) % servicesCount : 0;
   const activeService = services[normalizedIndex];
-  const fallbackLogo = `${import.meta.env.BASE_URL}logo.png`;
+  const fallbackLogo = `${import.meta.env.BASE_URL}logo-512.jpg`;
 
   const allServiceImages = useMemo(
     () => Array.from(new Set(services.map((service) => service.image).filter(Boolean))),
@@ -211,7 +211,7 @@ export const Services = ({ openModal }: ServicesProps) => {
                 alt={activeService.title}
                 className="absolute inset-0 w-full h-full object-cover object-center opacity-28"
                 referrerPolicy="no-referrer"
-                onError={handleImageError}
+                loading="lazy" decoding="async" onError={handleImageError}
               />
               <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#070707]/94 to-[#090909]/84" />
               <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(213,181,122,0.12),transparent_35%)]" />
@@ -322,7 +322,7 @@ export const Services = ({ openModal }: ServicesProps) => {
                         isActive ? 'opacity-78 scale-105' : 'opacity-35'
                       }`}
                       referrerPolicy="no-referrer"
-                      onError={handleImageError}
+                      loading="lazy" decoding="async" onError={handleImageError}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-black/10" />
                     <div className="absolute inset-x-0 bottom-0 p-4">
@@ -399,3 +399,5 @@ export const Services = ({ openModal }: ServicesProps) => {
     </div>
   );
 };
+
+

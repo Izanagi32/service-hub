@@ -16,6 +16,18 @@ export default defineConfig({
       "@": path.resolve(__dirname, "."),
     },
   },
+  build: {
+    sourcemap: false,
+    cssCodeSplit: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ["react", "react-dom", "react-router-dom"],
+          motion: ["motion", "lucide-react"],
+        },
+      },
+    },
+  },
   server: {
     hmr: process.env.DISABLE_HMR !== "true",
   },

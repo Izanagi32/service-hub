@@ -10,7 +10,7 @@ interface LayoutProps {
 }
 
 export const Layout = ({ children, openModal }: LayoutProps) => {
-  const logoSrc = `${import.meta.env.BASE_URL}logo.png`;
+  const logoSrc = `${import.meta.env.BASE_URL}logo-512.jpg`;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
@@ -205,7 +205,7 @@ export const Layout = ({ children, openModal }: LayoutProps) => {
                         href={`tel:${BUSINESS_INFO.phoneE164}`}
                         className="tap-feedback touch-manipulation rounded-lg border border-white/10 bg-white/[0.02] px-3 py-3 text-[10px] font-semibold tracking-[0.14em] uppercase text-gray-200 text-center"
                       >
-                        ???????
+                        Дзвінок
                       </a>
                       <a
                         href={BUSINESS_INFO.mapsUrl}
@@ -213,7 +213,7 @@ export const Layout = ({ children, openModal }: LayoutProps) => {
                         rel="noopener noreferrer"
                         className="tap-feedback touch-manipulation rounded-lg border border-white/10 bg-white/[0.02] px-3 py-3 text-[10px] font-semibold tracking-[0.14em] uppercase text-gray-200 text-center"
                       >
-                        ?????
+                        Карта
                       </a>
                     </div>
                   </div>
@@ -244,10 +244,10 @@ export const Layout = ({ children, openModal }: LayoutProps) => {
                 Наша репутація - це якість робіт, прозора комунікація та увага до деталей.
               </p>
               <div className="flex gap-4">
-                <a href={BUSINESS_INFO.instagramUrl} target="_blank" rel="noopener noreferrer" className="tap-feedback touch-manipulation w-11 h-11 sm:w-12 sm:h-12 border border-white/10 flex items-center justify-center hover:bg-blue-600 hover:border-blue-600 transition-all group">
+                <a aria-label="Instagram HubService" href={BUSINESS_INFO.instagramUrl} target="_blank" rel="noopener noreferrer" className="tap-feedback touch-manipulation w-11 h-11 sm:w-12 sm:h-12 border border-white/10 flex items-center justify-center hover:bg-blue-600 hover:border-blue-600 transition-all group">
                   <Instagram className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-white" />
                 </a>
-                <a href={BUSINESS_INFO.facebookUrl} target="_blank" rel="noopener noreferrer" className="tap-feedback touch-manipulation w-11 h-11 sm:w-12 sm:h-12 border border-white/10 flex items-center justify-center hover:bg-blue-600 hover:border-blue-600 transition-all group">
+                <a aria-label="Facebook HubService" href={BUSINESS_INFO.facebookUrl} target="_blank" rel="noopener noreferrer" className="tap-feedback touch-manipulation w-11 h-11 sm:w-12 sm:h-12 border border-white/10 flex items-center justify-center hover:bg-blue-600 hover:border-blue-600 transition-all group">
                   <Facebook className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-white" />
                 </a>
               </div>
@@ -297,3 +297,6 @@ export const Layout = ({ children, openModal }: LayoutProps) => {
     </div>
   );
 };
+
+
+

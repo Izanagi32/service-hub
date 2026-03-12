@@ -1,17 +1,18 @@
-import { useEffect, useRef, useState, FormEvent } from "react";
+import { lazy, Suspense, useEffect, useRef, useState, FormEvent } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Layout } from "./components/layout/Layout";
-import { Home } from "./pages/Home";
-import { Services } from "./pages/Services";
-import { About } from "./pages/About";
-import { Team } from "./pages/Team";
-import { Contact } from "./pages/Contact";
-import { PrivacyPolicy } from "./pages/PrivacyPolicy";
-import { TermsOfService } from "./pages/TermsOfService";
 import { BookingModal } from "./components/BookingModal";
 import { Analytics } from "./components/Analytics";
 import { services } from "./constants";
 import { submitBookingRequest } from "./lib/submissions";
+
+const Home = lazy(() => import("./pages/Home").then((m) => ({ default: m.Home })));
+const Services = lazy(() => import("./pages/Services").then((m) => ({ default: m.Services })));
+const About = lazy(() => import("./pages/About").then((m) => ({ default: m.About })));
+const Team = lazy(() => import("./pages/Team").then((m) => ({ default: m.Team })));
+const Contact = lazy(() => import("./pages/Contact").then((m) => ({ default: m.Contact })));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy").then((m) => ({ default: m.PrivacyPolicy })));
+const TermsOfService = lazy(() => import("./pages/TermsOfService").then((m) => ({ default: m.TermsOfService })));
 
 export default function App() {
   const defaultServiceTitle = services[0]?.title ?? "";
@@ -113,15 +114,23 @@ export default function App() {
       <Analytics />
 
       <Layout openModal={openModal}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/services" element={<Services openModal={openModal} />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/team" element={<Team />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/privacy" element={<PrivacyPolicy />} />
-          <Route path="/terms" element={<TermsOfService />} />
-        </Routes>
+        <Suspense
+          fallback={
+            <div className="min-h-[40vh] flex items-center justify-center text-gray-400 text-sm tracking-[0.12em] uppercase">
+              Завантаження...
+            </div>
+          }
+        >
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/services" element={<Services openModal={openModal} />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/team" element={<Team />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/terms" element={<TermsOfService />} />
+          </Routes>
+        </Suspense>
       </Layout>
 
       <BookingModal

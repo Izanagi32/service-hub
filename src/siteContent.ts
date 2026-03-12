@@ -15,3 +15,4 @@ export const BUSINESS_INFO = {
   facebookUrl: "https://www.facebook.com/hubservice",
   mapsUrl: "https://maps.app.goo.gl/Jpm5GDXnnsxSL3ih9",
 } as const;
+

@@ -26,7 +26,7 @@ export const Home = () => {
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [dragX, setDragX] = useState(0);
   const trackRef = useRef<HTMLDivElement>(null);
-  const portfolioFallbackImage = '/logo.png';
+  const portfolioFallbackImage = '/logo-512.jpg';
   const portfolioImageFallbacks = services.map((service) => service.image);
 
   const getPortfolioImageCandidates = (
@@ -207,7 +207,12 @@ export const Home = () => {
           <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent z-20" />
           <img 
             src={`${import.meta.env.BASE_URL}hero-bg.jpg`} 
-            alt="Преміальний автомобіль" 
+            alt="Преміальний автомобіль"
+            fetchPriority="high"
+            loading="eager"
+            decoding="async"
+            width={1200}
+            height={848}
             className="w-full h-full object-cover scale-105"
           />
         </div>
@@ -399,14 +404,14 @@ export const Home = () => {
               </div>
               <div className="flex gap-3 sm:gap-4">
                 <button 
-                  onClick={() => scroll('left')}
+                  onClick={() => scroll('left')} aria-label="Попередній слайд портфоліо"
                   className="tap-feedback touch-manipulation w-12 h-12 sm:w-16 sm:h-16 border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-white group"
                   disabled={carouselIndex === 0}
                 >
                   <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 group-hover:-translate-x-1 transition-transform" />
                 </button>
                 <button 
-                  onClick={() => scroll('right')}
+                  onClick={() => scroll('right')} aria-label="Наступний слайд портфоліо"
                   className="tap-feedback touch-manipulation w-12 h-12 sm:w-16 sm:h-16 border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-white group"
                   disabled={carouselIndex === portfolioItems.length - 1}
                 >
@@ -509,9 +514,13 @@ export const Home = () => {
               </p>
               <div className="flex items-center gap-4">
                 <div className="flex -space-x-4">
-                  {[1, 2, 3, 4].map(i => (
-                    <div key={i} className="w-12 h-12 rounded-full border-4 border-[#050505] bg-gray-800 overflow-hidden">
-                      <img src={`https://i.pravatar.cc/150?u=${i}`} alt="Avatar" referrerPolicy="no-referrer" />
+                  {['ОК', 'МТ', 'АЛ', 'ВН'].map((initials) => (
+                    <div
+                      key={initials}
+                      className="w-12 h-12 rounded-full border-4 border-[#050505] bg-gradient-to-br from-[#1b2a44] to-[#263d63] text-[11px] font-bold tracking-wide text-white flex items-center justify-center"
+                      aria-hidden="true"
+                    >
+                      {initials}
                     </div>
                   ))}
                 </div>
@@ -554,13 +563,13 @@ export const Home = () => {
 
               <div className="flex gap-3 sm:gap-4 mt-8">
                 <button 
-                  onClick={prevTestimonial}
+                  onClick={prevTestimonial} aria-label="Попередній відгук"
                   className="tap-feedback touch-manipulation w-11 h-11 sm:w-14 sm:h-14 border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all group"
                 >
                   <ChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
                 </button>
                 <button 
-                  onClick={nextTestimonial}
+                  onClick={nextTestimonial} aria-label="Наступний відгук"
                   className="tap-feedback touch-manipulation w-11 h-11 sm:w-14 sm:h-14 border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all group"
                 >
                   <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -569,7 +578,7 @@ export const Home = () => {
                   {testimonials.map((_, i) => (
                     <button 
                       key={i}
-                      onClick={() => setTestimonialIndex(i)}
+                      onClick={() => setTestimonialIndex(i)} aria-label={`Перейти до відгуку ${i + 1}`}
                       className={`h-[2px] transition-all duration-500 ${i === testimonialIndex ? 'w-8 bg-blue-600' : 'w-4 bg-white/10 hover:bg-white/30'}`}
                     />
                   ))}
@@ -685,3 +694,9 @@ export const Home = () => {
     </>
   );
 };
+
+
+
+
+
+

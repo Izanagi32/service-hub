@@ -45,3 +45,4 @@ To receive form submissions in Telegram, set one of these options in `.env.local
 - Direct mode: set `VITE_TELEGRAM_BOT_TOKEN` and `VITE_TELEGRAM_CHAT_ID`.
 
 Direct mode works, but token is exposed in a static frontend build.
+
