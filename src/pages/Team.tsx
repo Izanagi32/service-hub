@@ -1,94 +1,179 @@
-import { motion } from 'motion/react';
-import { teamMembers } from '../constants';
-import { SEO } from '../components/SEO';
+import { motion } from "motion/react";
+import { MapPin, Phone, ShieldCheck } from "lucide-react";
+import { SEO } from "../components/SEO";
+import { buildSrcSet } from "../lib/images";
+import { teamRoles } from "../constants";
+import { BUSINESS_INFO } from "../siteContent";
 
 const fadeInUp = {
-  initial: { opacity: 0, y: 30 },
+  initial: { opacity: 0, y: 24 },
   whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true },
-  transition: { duration: 0.8, ease: "easeOut" as const }
+  viewport: { once: true, margin: "-80px" },
+  transition: { duration: 0.6, ease: "easeOut" as const },
 };
 
 export const Team = () => {
   return (
-    <div className="pt-24 sm:pt-28 md:pt-32 pb-14 sm:pb-16 md:pb-20">
-      <SEO 
-        title="Команда" 
-        description="Познайомтеся з нашими сертифікованими майстрами у Горохові. Професіонали з багаторічним досвідом у сфері детейлінгу та сервісу."
-        keywords="команда детейлерів, майстри розвал-сходження, спеціалісти з детейлінгу"
+    <div className="bg-[#050505] pb-16 pt-24 sm:pt-28 md:pt-32">
+      <SEO
+        title="Команда та стандарти автосервісу в Горохові"
+        description="Хто працює з вашим авто в HubService: приймання, 3D розвал-сходження та хімчистка. Як розподілені ролі й хто відповідає за якість."
+        keywords="команда автосервісу, майстер розвал-сходження, хімчистка салону Горохів"
+        breadcrumb={[
+          { name: "Головна", path: "/" },
+          { name: "Команда", path: "/team" },
+        ]}
         schema={{
           "@context": "https://schema.org",
-          "@type": "ProfilePage",
-          "mainEntity": {
-            "@type": "ItemList",
-            "itemListElement": teamMembers.map((m, i) => ({
-              "@type": "ListItem",
-              "position": i + 1,
-              "item": {
-                "@type": "Person",
-                "name": m.name,
-                "jobTitle": m.role,
-                "description": `${m.specialty}. ${m.experience}`,
-                "image": m.image
-              }
-            }))
-          }
+          "@type": "AboutPage",
+          name: "Команда та стандарти HubService",
+          mainEntity: {
+            "@type": "Organization",
+            name: BUSINESS_INFO.brand,
+            url: BUSINESS_INFO.siteUrl,
+            telephone: BUSINESS_INFO.phoneE164,
+            address: {
+              "@type": "PostalAddress",
+              streetAddress: BUSINESS_INFO.addressLine,
+              addressLocality: BUSINESS_INFO.city,
+              addressCountry: "UA",
+            },
+          },
         }}
       />
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div {...fadeInUp} className="text-center mb-12 sm:mb-16 md:mb-20">
-          <span className="text-blue-500 text-xs font-bold tracking-[0.2em] uppercase mb-4 block">Наша Команда</span>
-          <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold font-display text-white mb-5 sm:mb-6">Майстри Своєї Справи</h1>
-          <p className="text-gray-400 max-w-2xl mx-auto text-base sm:text-lg font-light">
-            Кожен член нашої команди - це сертифікований спеціаліст з багаторічним досвідом роботи у сфері детейлінгу.
+
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <motion.div {...fadeInUp} className="max-w-3xl">
+          <span className="mb-4 inline-flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.24em] text-[#d5b57a]">
+            <span className="h-px w-8 bg-[#d5b57a]/80" aria-hidden="true" />
+            Команда
+          </span>
+          <h1 className="mb-5 font-display text-3xl font-semibold uppercase leading-[0.95] text-white sm:text-5xl lg:text-6xl">
+            Хто працює <span className="text-[#d5b57a]">з вашим авто</span>
+          </h1>
+          <p className="max-w-2xl text-base leading-relaxed text-[#aab3c2] sm:text-lg">
+            У нас невелика команда, тому кожне авто веде конкретна людина — від приймання до
+            видачі. Ось як розподілені ролі.
           </p>
         </motion.div>
+      </section>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 md:gap-12">
-          {teamMembers.map((member, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 30 }}
+      <section className="mx-auto mt-12 max-w-7xl px-4 sm:mt-16 sm:px-6 lg:px-8">
+        <div className="grid gap-4 md:grid-cols-3">
+          {teamRoles.map((role, index) => (
+            <motion.article
+              key={role.title}
+              initial={{ opacity: 0, y: 22 }}
               whileInView={{ opacity: 1, y: 0 }}
-              whileHover={{ y: -10, scale: 1.02 }}
               viewport={{ once: true }}
-              transition={{ 
-                duration: 0.6, 
-                delay: index * 0.1,
-                y: { type: "spring", stiffness: 400, damping: 25 },
-                scale: { type: "spring", stiffness: 400, damping: 25 }
-              }}
-              className="group relative p-3 sm:p-4 rounded-2xl transition-all duration-500 hover:bg-white/[0.02] hover:shadow-[0_20px_50px_-20px_rgba(37,99,235,0.15)]"
+              transition={{ delay: index * 0.08, duration: 0.5 }}
+              className="group flex flex-col border border-white/12 bg-white/[0.03] p-6 transition-all duration-300 hover:-translate-y-1 hover:border-[#d5b57a]/45 sm:p-7"
             >
-              <div className="relative aspect-[3/4] overflow-hidden border border-white/10 mb-6">
-                <img 
-                  src={member.image} 
-                  alt={member.name} 
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0"
-                  referrerPolicy="no-referrer"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-60" />
-                
-                {/* Hover Overlay */}
-                <div className="absolute inset-0 flex flex-col justify-end p-4 sm:p-6 md:p-8 translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-                  <div className="bg-blue-600/90 backdrop-blur-md p-4 border border-blue-400/30">
-                    <p className="text-white text-xs font-bold uppercase tracking-widest mb-1">{member.specialty}</p>
-                    <p className="text-blue-100 text-[10px] uppercase tracking-wider">{member.experience}</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="text-center">
-                <h3 className="text-lg sm:text-xl font-bold text-white font-display mb-1 tracking-wide">{member.name}</h3>
-                <p className="text-blue-500 text-xs font-bold uppercase tracking-[0.2em]">{member.role}</p>
-              </div>
-            </motion.div>
+              <span className="mb-5 flex h-12 w-12 items-center justify-center border border-[#d5b57a]/35 text-[#d5b57a] transition-transform duration-300 group-hover:scale-110">
+                {role.icon}
+              </span>
+              <h2 className="mb-2 font-display text-xl font-semibold text-white">{role.title}</h2>
+              <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#d5b57a]">
+                {role.focus}
+              </p>
+              <p className="text-sm leading-relaxed text-[#aab3c2]">{role.description}</p>
+            </motion.article>
           ))}
+        </div>
+      </section>
+
+      <section className="mx-auto mt-16 max-w-7xl px-4 sm:mt-20 sm:px-6 lg:px-8">
+        <div className="grid gap-6 border border-white/12 bg-[#080808] p-5 sm:p-7 lg:grid-cols-2 lg:gap-10 lg:p-10">
+          <motion.div {...fadeInUp}>
+            <h2 className="mb-4 font-display text-2xl font-semibold text-white sm:text-3xl">
+              Обладнання, а не обіцянки
+            </h2>
+            <p className="mb-6 text-base leading-relaxed text-[#aab3c2]">
+              Результат залежить від підготовки. У боксі є підйомник для робіт під авто,
+              3D-стенд розвал-сходження та окрема зона приймання, де фіксуємо стан кузова.
+            </p>
+            <ul className="space-y-3">
+              {[
+                "Підйомник і робоча зона для шинного сервісу",
+                "3D-стенд розвал-сходження з протоколом",
+                "Професійне освітлення для контролю покриття",
+                "Окрема зона вантажної мийки",
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-3 text-sm text-[#d7dbe3]">
+                  <ShieldCheck
+                    className="mt-0.5 h-4 w-4 shrink-0 text-[#d5b57a]"
+                    aria-hidden="true"
+                  />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 22 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.55 }}
+            className="grid grid-cols-2 gap-3"
+          >
+            <img
+              src={`${import.meta.env.BASE_URL}photo-garage.jpg`}
+              srcSet={buildSrcSet("photo-garage.jpg", 1554, 800)}
+              sizes="(min-width: 1024px) 25vw, 50vw"
+              alt="Робочий бокс з підйомником"
+              width={1554}
+              height={772}
+              loading="lazy"
+              decoding="async"
+              className="aspect-[4/3] w-full border border-white/10 object-cover"
+            />
+            <img
+              src={`${import.meta.env.BASE_URL}truck-wash.jpg`}
+              srcSet={buildSrcSet("truck-wash.jpg", 1193)}
+              sizes="(min-width: 1024px) 25vw, 50vw"
+              alt="Вантажна мийка на території сервісу"
+              width={1193}
+              height={819}
+              loading="lazy"
+              decoding="async"
+              className="aspect-[4/3] w-full border border-white/10 object-cover"
+            />
+          </motion.div>
+        </div>
+      </section>
+
+      <section className="mx-auto mt-16 max-w-7xl px-4 sm:mt-20 sm:px-6 lg:px-8">
+        <div className="flex flex-col gap-5 border border-white/15 bg-[#0b1224] p-6 sm:p-8 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h2 className="mb-2 font-display text-2xl font-semibold text-white">
+              Познайомимося особисто
+            </h2>
+            <p className="max-w-xl text-sm leading-relaxed text-[#aab3c2]">
+              Приїжджайте на огляд — покажемо бокс, розкажемо про етапи й дамо орієнтовний
+              кошторис.
+            </p>
+          </div>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <a
+              href={`tel:${BUSINESS_INFO.phoneE164}`}
+              className="btn-shine inline-flex min-h-12 touch-manipulation items-center justify-center gap-2 bg-[#2f66f5] px-6 py-3.5 text-[11px] font-bold uppercase tracking-[0.16em] text-white transition-colors hover:bg-[#4a7bff]"
+            >
+              <Phone size={14} />
+              {BUSINESS_INFO.phoneDisplay}
+            </a>
+            <a
+              href={BUSINESS_INFO.mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-12 touch-manipulation items-center justify-center gap-2 border border-white/25 px-6 py-3.5 text-[11px] font-bold uppercase tracking-[0.16em] text-white transition-colors hover:border-[#d5b57a]"
+            >
+              <MapPin size={14} />
+              Маршрут
+            </a>
+          </div>
         </div>
       </section>
     </div>
   );
 };
-
-
-

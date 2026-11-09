@@ -1,84 +1,165 @@
-import { useState, FormEvent } from "react";
-import { motion, AnimatePresence } from "motion/react";
-import { MapPin, Phone, Mail, Clock, Send, CheckCircle2 } from "lucide-react";
+import { useEffect, useRef, useState, FormEvent } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import {
+  CheckCircle2,
+  Clock,
+  Mail,
+  MapPin,
+  MessageCircle,
+  Phone,
+  Send,
+} from "lucide-react";
+import { Link } from "react-router-dom";
 import { SEO } from "../components/SEO";
-import { BUSINESS_INFO } from "../siteContent";
-import { submitContactRequest } from "../lib/submissions";
+import { MapEmbed } from "../components/MapEmbed";
+import { BUSINESS_INFO, ADDRESS_FULL, whatsappLink } from "../siteContent";
+import { submitContactRequest, type DeliveryResult } from "../lib/submissions";
+import { formatPhone, isValidEmail, isValidPhone } from "../lib/validation";
+import { trackEvent } from "../lib/analytics";
 
 const fadeInUp = {
-  initial: { opacity: 0, y: 30 },
+  initial: { opacity: 0, y: 24 },
   whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true },
-  transition: { duration: 0.8, ease: "easeOut" as const },
+  viewport: { once: true, margin: "-80px" },
+  transition: { duration: 0.6, ease: "easeOut" as const },
 };
 
+interface ContactFormState {
+  name: string;
+  phone: string;
+  email: string;
+  message: string;
+  consent: boolean;
+  website: string;
+}
+
+const emptyForm = (): ContactFormState => ({
+  name: "",
+  phone: "",
+  email: "",
+  message: "",
+  consent: false,
+  website: "",
+});
+
+const inputClass =
+  "w-full rounded-lg border border-white/20 bg-[#0b1020] px-4 py-3.5 text-[16px] text-white transition-colors placeholder:text-[#7d8798] focus:border-[#8fb0ff] focus:outline-none focus:ring-2 focus:ring-[#8fb0ff]/25";
+
 export const Contact = () => {
-  const [contactFormData, setContactFormData] = useState({
-    name: "",
-    email: "",
-    message: "",
-  });
-  const [contactErrors, setContactErrors] = useState<Record<string, string>>({});
-  const [isContactSubmitting, setIsContactSubmitting] = useState(false);
-  const [isContactSuccess, setIsContactSuccess] = useState(false);
+  const [form, setForm] = useState<ContactFormState>(emptyForm);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [delivery, setDelivery] = useState<DeliveryResult | null>(null);
   const [submitError, setSubmitError] = useState("");
+  const submitLock = useRef(false);
+  const successRef = useRef<HTMLDivElement>(null);
 
-  const validateContactForm = () => {
-    const newErrors: Record<string, string> = {};
+  useEffect(() => {
+    if (delivery) successRef.current?.focus({ preventScroll: true });
+  }, [delivery]);
 
-    if (!contactFormData.name.trim()) {
-      newErrors.name = "Будь ласка, введіть ваше ім'я";
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!contactFormData.email.trim()) {
-      newErrors.email = "Будь ласка, введіть електронну пошту";
-    } else if (!emailRegex.test(contactFormData.email)) {
-      newErrors.email = "Невірний формат електронної пошти";
-    }
-
-    if (!contactFormData.message.trim()) {
-      newErrors.message = "Будь ласка, введіть повідомлення";
-    } else if (contactFormData.message.trim().length < 10) {
-      newErrors.message = "Повідомлення має бути не менше 10 символів";
-    }
-
-    setContactErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  const update = <K extends keyof ContactFormState>(key: K, value: ContactFormState[K]) => {
+    setForm((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleContactSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!validateContactForm()) {
-      return;
+  const validate = (): boolean => {
+    const nextErrors: Record<string, string> = {};
+
+    if (!form.name.trim()) {
+      nextErrors.name = "Вкажіть ім'я";
+    } else if (form.name.trim().length < 2) {
+      nextErrors.name = "Ім'я має містити щонайменше 2 символи";
     }
 
+    if (form.phone.trim() && !isValidPhone(form.phone)) {
+      nextErrors.phone = "Перевірте номер телефону";
+    }
+
+    if (!form.email.trim()) {
+      nextErrors.email = "Вкажіть електронну пошту";
+    } else if (!isValidEmail(form.email.trim())) {
+      nextErrors.email = "Перевірте формат електронної пошти";
+    }
+
+    if (!form.message.trim()) {
+      nextErrors.message = "Опишіть, будь ласка, ваш запит";
+    } else if (form.message.trim().length < 10) {
+      nextErrors.message = "Додайте хоча б 10 символів, щоб ми зрозуміли запит";
+    }
+
+    if (!form.consent) {
+      nextErrors.consent = "Потрібна згода на обробку персональних даних";
+    }
+
+    setErrors(nextErrors);
+
+    if (Object.keys(nextErrors).length > 0) {
+      window.requestAnimationFrame(() => {
+        document
+          .querySelector<HTMLElement>('form [aria-invalid="true"]')
+          ?.focus({ preventScroll: false });
+      });
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+
+    if (submitLock.current) return;
+    submitLock.current = true;
+
     try {
+      if (!validate()) {
+        trackEvent("contact_validation_error");
+        return;
+      }
+
+      // Honeypot: real users never see or fill this field.
+      if (form.website.trim()) return;
+
       setSubmitError("");
-      setIsContactSubmitting(true);
-      await submitContactRequest(
-        contactFormData.name.trim(),
-        contactFormData.email.trim(),
-        contactFormData.message.trim(),
-      );
-      setIsContactSuccess(true);
-      setTimeout(() => {
-        setIsContactSuccess(false);
-        setContactFormData({ name: "", email: "", message: "" });
-      }, 5000);
+      setIsSubmitting(true);
+
+      const consentAt = new Date().toISOString();
+      const result = await submitContactRequest({
+        name: form.name.trim(),
+        phone: form.phone.trim(),
+        email: form.email.trim(),
+        message: form.message.trim(),
+        consent: true,
+        consentAt,
+      });
+
+      if (result.channel === "whatsapp") {
+        window.open(result.url, "_blank", "noopener,noreferrer");
+      }
+
+      setDelivery(result);
+      trackEvent("contact_submit", { channel: result.channel });
     } catch (error) {
-      setSubmitError(error instanceof Error ? error.message : "Не вдалося надіслати повідомлення. Спробуйте ще раз.");
+      trackEvent("contact_error");
+      setSubmitError(
+        error instanceof Error ? error.message : "Не вдалося надіслати повідомлення. Спробуйте ще раз.",
+      );
     } finally {
-      setIsContactSubmitting(false);
+      submitLock.current = false;
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="pt-24 sm:pt-28 md:pt-32 pb-14 sm:pb-16 md:pb-20">
+    <div className="bg-[#050505] pb-16 pt-24 sm:pt-28 md:pt-32">
       <SEO
-        title="Контакти"
-        description="Зв'яжіться з нами для запису на детейлінг або сервіс у Горохові: адреса, телефон, графік роботи та форма зворотного зв'язку."
-        keywords="контакти детейлінг, запис на сервіс, детейлінг горохів адреса"
+        title="Контакти автосервісу в Горохові"
+        description={`HubService у Горохові, ${BUSINESS_INFO.addressLine}. Телефон ${BUSINESS_INFO.phoneDisplay}. Графік Пн–Сб 09:00–20:00. Запис онлайн і карта проїзду.`}
+        keywords="контакти автосервіс Горохів, адреса, телефон, графік роботи, запис на сервіс"
+        breadcrumb={[
+          { name: "Головна", path: "/" },
+          { name: "Контакти", path: "/contact" },
+        ]}
         schema={{
           "@context": "https://schema.org",
           "@type": "ContactPage",
@@ -87,166 +168,390 @@ export const Contact = () => {
             name: BUSINESS_INFO.brand,
             telephone: BUSINESS_INFO.phoneE164,
             email: BUSINESS_INFO.email,
+            url: BUSINESS_INFO.siteUrl,
             hasMap: BUSINESS_INFO.mapsUrl,
             address: {
               "@type": "PostalAddress",
               streetAddress: BUSINESS_INFO.addressLine,
               addressLocality: BUSINESS_INFO.city,
+              addressRegion: BUSINESS_INFO.region,
               postalCode: BUSINESS_INFO.postalCode,
               addressCountry: "UA",
+            },
+            openingHoursSpecification: {
+              "@type": "OpeningHoursSpecification",
+              dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+              opens: "09:00",
+              closes: "20:00",
             },
           },
         }}
       />
 
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div {...fadeInUp} className="text-center mb-12 sm:mb-16 md:mb-20">
-          <span className="text-blue-500 text-xs font-bold tracking-[0.2em] uppercase mb-4 block">Контакти</span>
-          <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold font-display text-white mb-5 sm:mb-6">Зв'яжіться з нами</h1>
-          <p className="text-gray-400 max-w-2xl mx-auto text-base sm:text-lg font-light">
-            Ми готові відповісти на запитання та підібрати оптимальний пакет послуг для вашого авто.
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-10 max-w-3xl sm:mb-14"
+        >
+          <span className="mb-4 inline-flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.24em] text-[#d5b57a]">
+            <span className="h-px w-8 bg-[#d5b57a]/80" aria-hidden="true" />
+            Контакти
+          </span>
+          <h1 className="mb-4 font-display text-3xl font-semibold uppercase leading-[0.95] text-white sm:text-5xl lg:text-6xl">
+            Зв'яжіться <span className="text-[#d5b57a]">з нами</span>
+          </h1>
+          <p className="max-w-2xl text-base leading-relaxed text-[#aab3c2] sm:text-lg">
+            Подзвоніть, напишіть у WhatsApp або залиште заявку — підкажемо, що потрібно авто, і
+            підберемо час.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-14 lg:gap-20">
+        <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-14">
           <motion.div {...fadeInUp}>
-            <div className="space-y-6 sm:space-y-10 md:space-y-12">
+            <ul className="space-y-3">
               {[
                 {
-                  icon: <MapPin className="w-8 h-8" />,
+                  icon: <MapPin className="h-5 w-5" />,
                   title: "Адреса",
-                  content: `${BUSINESS_INFO.addressLine}, ${BUSINESS_INFO.city}, ${BUSINESS_INFO.country}`,
+                  content: ADDRESS_FULL,
+                  href: BUSINESS_INFO.mapsUrl,
+                  external: true,
                 },
-                { icon: <Phone className="w-8 h-8" />, title: "Телефон", content: BUSINESS_INFO.phoneDisplay },
-                { icon: <Mail className="w-8 h-8" />, title: "Електронна пошта", content: BUSINESS_INFO.email },
-                { icon: <Clock className="w-8 h-8" />, title: "Графік роботи", content: BUSINESS_INFO.workingHoursFull },
-              ].map((item, i) => (
-                <div key={i} className="flex items-start gap-4 sm:gap-6 md:gap-8 group">
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 border border-white/10 flex items-center justify-center text-blue-500 group-hover:bg-blue-600 group-hover:text-white transition-all shrink-0">
-                    {item.icon}
-                  </div>
-                  <div>
-                    <h3 className="text-lg sm:text-xl font-bold text-white font-display mb-1 sm:mb-2">{item.title}</h3>
-                    <p className="text-gray-500 leading-relaxed">{item.content}</p>
-                  </div>
-                </div>
-              ))}
+                {
+                  icon: <Phone className="h-5 w-5" />,
+                  title: "Телефон",
+                  content: BUSINESS_INFO.phoneDisplay,
+                  href: `tel:${BUSINESS_INFO.phoneE164}`,
+                },
+                {
+                  icon: <Mail className="h-5 w-5" />,
+                  title: "Електронна пошта",
+                  content: BUSINESS_INFO.email,
+                  href: `mailto:${BUSINESS_INFO.email}`,
+                },
+                {
+                  icon: <Clock className="h-5 w-5" />,
+                  title: "Графік роботи",
+                  content: BUSINESS_INFO.workingHoursFull,
+                },
+              ].map((item) => {
+                const content = (
+                  <>
+                    <span className="flex h-11 w-11 shrink-0 items-center justify-center border border-white/20 text-[#d5b57a]">
+                      {item.icon}
+                    </span>
+                    <span>
+                      <span className="mb-1 block text-[10px] font-bold uppercase tracking-[0.16em] text-[#8b93a3]">
+                        {item.title}
+                      </span>
+                      <span className="block text-sm leading-relaxed text-white">{item.content}</span>
+                    </span>
+                  </>
+                );
+
+                return (
+                  <li key={item.title}>
+                    {item.href ? (
+                      <a
+                        href={item.href}
+                        {...(item.external
+                          ? { target: "_blank", rel: "noopener noreferrer" }
+                          : {})}
+                        className="flex items-start gap-4 border border-white/12 bg-white/[0.03] p-4 transition-colors hover:border-[#d5b57a]/45"
+                      >
+                        {content}
+                      </a>
+                    ) : (
+                      <div className="flex items-start gap-4 border border-white/12 bg-white/[0.03] p-4">
+                        {content}
+                      </div>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <a
+                href={whatsappLink(
+                  `Вітаю! Пишу з сайту ${BUSINESS_INFO.brand}. Хочу уточнити щодо послуг.`,
+                )}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-12 items-center justify-center gap-2 bg-[#12813f] px-4 py-3.5 text-[11px] font-bold uppercase tracking-[0.14em] text-white transition-colors hover:bg-[#16924a]"
+              >
+                <MessageCircle size={15} />
+                Написати в WhatsApp
+              </a>
+              <a
+                href={`tel:${BUSINESS_INFO.phoneE164}`}
+                className="inline-flex min-h-12 items-center justify-center gap-2 border border-white/25 px-4 py-3.5 text-[11px] font-bold uppercase tracking-[0.14em] text-white transition-colors hover:border-[#d5b57a]"
+              >
+                <Phone size={15} />
+                Подзвонити
+              </a>
             </div>
 
-            <a
-              href={BUSINESS_INFO.mapsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-10 sm:mt-14 md:mt-16 aspect-video bg-white/[0.02] border border-white/5 relative overflow-hidden group rounded-lg block"
-              aria-label="Open location in Google Maps"
-            >
-              <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?q=80&w=2300&auto=format&fit=crop')] grayscale opacity-30 group-hover:opacity-50 transition-opacity duration-700" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="bg-blue-600 p-4 rounded-none shadow-2xl group-hover:scale-105 transition-transform">
-                  <MapPin className="w-8 h-8 text-white" />
-                </div>
-              </div>
-              <div className="absolute bottom-4 left-4 right-4 text-center text-white text-xs uppercase tracking-[0.2em] font-bold bg-black/40 border border-white/10 py-2">
-                Open in Google Maps
-              </div>
-            </a>
+            <div className="mt-6">
+              <MapEmbed />
+            </div>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="bg-white/[0.02] border border-white/5 p-5 sm:p-8 md:p-10 lg:p-12 relative rounded-xl"
+            className="relative border border-white/12 bg-white/[0.03] p-5 sm:p-8"
           >
-            <h3 className="text-xl sm:text-2xl font-bold text-white font-display mb-7 sm:mb-10">Напишіть нам</h3>
+            <h2 className="mb-2 font-display text-2xl font-semibold text-white sm:text-3xl">
+              Напишіть нам
+            </h2>
+            <p className="mb-7 text-sm leading-relaxed text-[#aab3c2]">
+              Опишіть запит — відповімо в робочий час. Поля з <span aria-hidden="true">*</span>
+              обов'язкові.
+            </p>
 
-            <form onSubmit={handleContactSubmit} className="space-y-6 sm:space-y-8">
-              <div className="space-y-2">
-                <label htmlFor="contact-name" className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500">Ваше ім'я</label>
-                <input
-                  id="contact-name"
-                  name="name"
-                  type="text"
-                  autoComplete="name"
-                  required
-                  aria-invalid={Boolean(contactErrors.name)}
-                  value={contactFormData.name}
-                  onChange={(e) => setContactFormData({ ...contactFormData, name: e.target.value })}
-                  className={`w-full bg-transparent border-b ${contactErrors.name ? "border-red-500" : "border-white/10"} py-3.5 sm:py-4 text-white focus:outline-none focus:border-blue-500 transition-colors placeholder:text-gray-700`}
-                  placeholder="Олександр Коваль"
-                />
-                {contactErrors.name && <p className="text-red-500 text-[10px] uppercase font-bold tracking-widest mt-2">{contactErrors.name}</p>}
+            <form onSubmit={handleSubmit} noValidate className="space-y-5">
+              {Object.keys(errors).length > 0 && (
+                <div
+                  role="alert"
+                  className="rounded-lg border border-red-400/40 bg-red-500/10 px-4 py-3 text-sm leading-relaxed text-red-200"
+                >
+                  Перевірте, будь ласка, поля: {Object.values(errors).join("; ")}.
+                </div>
+              )}
+              <div className="grid gap-5 sm:grid-cols-2">
+                <div>
+                  <label
+                    htmlFor="contact-name"
+                    className="mb-2 block text-[11px] font-bold uppercase tracking-[0.16em] text-[#aab3c2]"
+                  >
+                    Ім'я <span className="text-[#d5b57a]">*</span>
+                  </label>
+                  <input
+                    id="contact-name"
+                    name="name"
+                    type="text"
+                    autoComplete="name"
+                    required
+                    value={form.name}
+                    onChange={(e) => update("name", e.target.value)}
+                    aria-invalid={Boolean(errors.name)}
+                    aria-describedby={errors.name ? "contact-name-error" : undefined}
+                    className={`${inputClass} ${errors.name ? "border-red-400" : ""}`}
+                    placeholder="Олександр"
+                  />
+                  {errors.name && (
+                    <p id="contact-name-error" className="mt-2 text-sm text-red-300">
+                      {errors.name}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="contact-phone"
+                    className="mb-2 block text-[11px] font-bold uppercase tracking-[0.16em] text-[#aab3c2]"
+                  >
+                    Телефон
+                  </label>
+                  <input
+                    id="contact-phone"
+                    name="phone"
+                    type="tel"
+                    inputMode="tel"
+                    autoComplete="tel"
+                    value={form.phone}
+                    onChange={(e) => update("phone", e.target.value)}
+                    onBlur={(e) => update("phone", formatPhone(e.target.value))}
+                    aria-invalid={Boolean(errors.phone)}
+                    aria-describedby={errors.phone ? "contact-phone-error" : undefined}
+                    className={`${inputClass} ${errors.phone ? "border-red-400" : ""}`}
+                    placeholder="+38 (0XX) XXX-XX-XX"
+                  />
+                  {errors.phone && (
+                    <p id="contact-phone-error" className="mt-2 text-sm text-red-300">
+                      {errors.phone}
+                    </p>
+                  )}
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <label htmlFor="contact-email" className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500">Ваша електронна пошта</label>
+              <div>
+                <label
+                  htmlFor="contact-email"
+                  className="mb-2 block text-[11px] font-bold uppercase tracking-[0.16em] text-[#aab3c2]"
+                >
+                  Електронна пошта <span className="text-[#d5b57a]">*</span>
+                </label>
                 <input
                   id="contact-email"
                   name="email"
                   type="email"
                   autoComplete="email"
                   required
-                  aria-invalid={Boolean(contactErrors.email)}
-                  value={contactFormData.email}
-                  onChange={(e) => setContactFormData({ ...contactFormData, email: e.target.value })}
-                  className={`w-full bg-transparent border-b ${contactErrors.email ? "border-red-500" : "border-white/10"} py-3.5 sm:py-4 text-white focus:outline-none focus:border-blue-500 transition-colors placeholder:text-gray-700`}
-                  placeholder="alex@example.com"
+                  value={form.email}
+                  onChange={(e) => update("email", e.target.value)}
+                  aria-invalid={Boolean(errors.email)}
+                  aria-describedby={errors.email ? "contact-email-error" : undefined}
+                  className={`${inputClass} ${errors.email ? "border-red-400" : ""}`}
+                  placeholder="you@example.com"
                 />
-                {contactErrors.email && <p className="text-red-500 text-[10px] uppercase font-bold tracking-widest mt-2">{contactErrors.email}</p>}
+                {errors.email && (
+                  <p id="contact-email-error" className="mt-2 text-sm text-red-300">
+                    {errors.email}
+                  </p>
+                )}
               </div>
 
-              <div className="space-y-2">
-                <label htmlFor="contact-message" className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500">Повідомлення</label>
+              <div>
+                <label
+                  htmlFor="contact-message"
+                  className="mb-2 block text-[11px] font-bold uppercase tracking-[0.16em] text-[#aab3c2]"
+                >
+                  Повідомлення <span className="text-[#d5b57a]">*</span>
+                </label>
                 <textarea
                   id="contact-message"
                   name="message"
-                  rows={4}
+                  rows={5}
+                  maxLength={1200}
                   required
-                  aria-invalid={Boolean(contactErrors.message)}
-                  value={contactFormData.message}
-                  onChange={(e) => setContactFormData({ ...contactFormData, message: e.target.value })}
-                  className={`w-full bg-transparent border-b ${contactErrors.message ? "border-red-500" : "border-white/10"} py-3.5 sm:py-4 text-white focus:outline-none focus:border-blue-500 transition-colors placeholder:text-gray-700 resize-none`}
-                  placeholder="Розкажіть нам про ваш запит..."
+                  value={form.message}
+                  onChange={(e) => update("message", e.target.value)}
+                  aria-invalid={Boolean(errors.message)}
+                  aria-describedby={errors.message ? "contact-message-error" : undefined}
+                  className={`${inputClass} resize-y ${errors.message ? "border-red-400" : ""}`}
+                  placeholder="Марка авто, послуга, зручний час"
                 />
-                {contactErrors.message && <p className="text-red-500 text-[10px] uppercase font-bold tracking-widest mt-2">{contactErrors.message}</p>}
+                {errors.message && (
+                  <p id="contact-message-error" className="mt-2 text-sm text-red-300">
+                    {errors.message}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label
+                  htmlFor="contact-consent"
+                  className="flex cursor-pointer items-start gap-3 text-sm leading-relaxed text-[#c3cad6]"
+                >
+                  <input
+                    id="contact-consent"
+                    name="consent"
+                    type="checkbox"
+                    checked={form.consent}
+                    onChange={(e) => update("consent", e.target.checked)}
+                    aria-invalid={Boolean(errors.consent)}
+                    aria-describedby={errors.consent ? "contact-consent-error" : undefined}
+                    className="mt-0.5 h-5 w-5 shrink-0 rounded border-white/30 bg-[#0b1020] accent-[#4f7cff]"
+                  />
+                  <span>
+                    Погоджуюся з{" "}
+                    <Link
+                      to="/privacy"
+                      className="text-white underline decoration-white/40 underline-offset-4 hover:decoration-white"
+                    >
+                      політикою конфіденційності
+                    </Link>{" "}
+                    і обробкою даних для відповіді на запит.
+                  </span>
+                </label>
+                {errors.consent && (
+                  <p id="contact-consent-error" className="mt-2 text-sm text-red-300">
+                    {errors.consent}
+                  </p>
+                )}
+              </div>
+
+              <div aria-hidden="true" className="hidden">
+                <label htmlFor="contact-website">Website</label>
+                <input
+                  id="contact-website"
+                  name="website"
+                  type="text"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={form.website}
+                  onChange={(e) => update("website", e.target.value)}
+                />
               </div>
 
               <button
                 type="submit"
-                disabled={isContactSubmitting}
-                className="tap-feedback touch-manipulation w-full py-4 sm:py-5 bg-blue-600 text-white font-bold text-[11px] sm:text-xs tracking-[0.28em] sm:tracking-[0.4em] uppercase hover:bg-white hover:text-black transition-all flex items-center justify-center gap-4 group disabled:opacity-50"
+                disabled={isSubmitting}
+                className="btn-shine group flex w-full items-center justify-center gap-3 bg-[#2f66f5] px-6 py-4 text-[11px] font-bold uppercase tracking-[0.2em] text-white transition-colors hover:bg-[#4a7bff] disabled:opacity-60"
               >
-                {isContactSubmitting ? (
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent animate-spin" />
+                {isSubmitting ? (
+                  <span className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
                 ) : (
                   <>
-                    Відправити <Send size={16} className="group-hover:translate-x-2 transition-transform" />
+                    Надіслати <Send size={15} className="transition-transform group-hover:translate-x-1" />
                   </>
                 )}
               </button>
 
               {submitError && (
-                <p className="text-red-400 text-xs leading-relaxed">{submitError}</p>
+                <p role="alert" className="border border-red-400/40 bg-red-500/10 px-4 py-3 text-sm leading-relaxed text-red-200">
+                  {submitError}
+                </p>
               )}
             </form>
 
             <AnimatePresence>
-              {isContactSuccess && (
+              {delivery && (
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
+                  ref={successRef}
+                  tabIndex={-1}
+                  initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 20 }}
-                  className="absolute inset-0 bg-[#050505] flex flex-col items-center justify-center p-5 sm:p-8 md:p-12 text-center z-20"
+                  exit={{ opacity: 0, y: 16 }}
+                  className="absolute inset-0 flex flex-col items-center justify-center bg-[#080b12] p-6 text-center outline-none"
                 >
-                  <div className="w-20 h-20 bg-blue-600 flex items-center justify-center mb-8">
-                    <CheckCircle2 className="w-10 h-10 text-white" />
+                  <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full border border-emerald-400/40 bg-emerald-500/15">
+                    <CheckCircle2 className="h-10 w-10 text-emerald-300" />
                   </div>
-                  <h3 className="text-2xl sm:text-3xl font-bold font-display text-white mb-4">Дякуємо!</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed">Ваше повідомлення відправлено. Ми зв'яжемося з вами найближчим часом.</p>
+
+                  {delivery.channel === "whatsapp" ? (
+                    <>
+                      <h3 className="mb-3 font-display text-2xl font-semibold text-white">
+                        Повідомлення сформовано
+                      </h3>
+                      <p className="mb-6 max-w-sm text-sm leading-relaxed text-[#c3cad6]">
+                        Ми відкрили WhatsApp із готовим текстом. Натисніть «Надіслати» — і ми
+                        відповімо в робочий час.
+                      </p>
+                      <a
+                        href={delivery.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex min-h-12 items-center justify-center gap-2 bg-[#12813f] px-6 py-3.5 text-[11px] font-bold uppercase tracking-[0.16em] text-white transition-colors hover:bg-[#16924a]"
+                      >
+                        <MessageCircle size={15} />
+                        Відкрити WhatsApp
+                      </a>
+                    </>
+                  ) : (
+                    <>
+                      <h3 className="mb-3 font-display text-2xl font-semibold text-white">
+                        Дякуємо!
+                      </h3>
+                      <p className="mb-6 max-w-sm text-sm leading-relaxed text-[#c3cad6]">
+                        Повідомлення надіслано. Ми відповімо на вказану пошту в робочий час.
+                      </p>
+                    </>
+                  )}
+
                   <button
                     type="button"
-                    onClick={() => setIsContactSuccess(false)}
-                    className="tap-feedback touch-manipulation mt-12 text-blue-500 text-[10px] font-bold uppercase tracking-[0.3em] hover:text-white transition-colors"
+                    onClick={() => {
+                      setDelivery(null);
+                      setForm(emptyForm());
+                      setErrors({});
+                    }}
+                    className="mt-7 text-[11px] font-bold uppercase tracking-[0.18em] text-[#8fb0ff] transition-colors hover:text-white"
                   >
                     Надіслати ще одне
                   </button>
@@ -259,4 +564,3 @@ export const Contact = () => {
     </div>
   );
 };
-

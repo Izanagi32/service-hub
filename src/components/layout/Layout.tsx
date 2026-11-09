@@ -1,23 +1,39 @@
-import { useState, useEffect, ReactNode } from "react";
+import { useEffect, useRef, useState, ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { motion, AnimatePresence } from "motion/react";
-import { Menu, X, Instagram, Facebook, MapPin, Phone, Clock } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { Clock, Mail, MapPin, Menu, Phone, X } from "lucide-react";
 import { BUSINESS_INFO } from "../../siteContent";
+import { ScrollProgress } from "../ScrollProgress";
+import { ScrollToTop } from "../ScrollToTop";
+import { useFocusTrap, useScrollLock } from "../../lib/a11y";
 
 interface LayoutProps {
   children: ReactNode;
   openModal: (serviceTitle?: string) => void;
 }
 
+const navItems = [
+  { name: "Головна", path: "/" },
+  { name: "Послуги", path: "/services" },
+  { name: "Про нас", path: "/about" },
+  { name: "Команда", path: "/team" },
+  { name: "Контакти", path: "/contact" },
+];
+
 export const Layout = ({ children, openModal }: LayoutProps) => {
   const logoSrc = `${import.meta.env.BASE_URL}logo-512.jpg`;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  const menuRef = useRef<HTMLElement>(null);
+
+  useScrollLock(isMenuOpen);
+  useFocusTrap(menuRef, isMenuOpen, () => setIsMenuOpen(false));
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
-    window.addEventListener("scroll", onScroll);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
@@ -26,87 +42,80 @@ export const Layout = ({ children, openModal }: LayoutProps) => {
     setIsMenuOpen(false);
   }, [location.pathname]);
 
-  useEffect(() => {
-    document.body.style.overflow = isMenuOpen ? "hidden" : "";
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setIsMenuOpen(false);
-      }
-    };
-
-    if (isMenuOpen) {
-      window.addEventListener("keydown", onKeyDown);
-    }
-
-    return () => {
-      document.body.style.overflow = "";
-      window.removeEventListener("keydown", onKeyDown);
-    };
-  }, [isMenuOpen]);
-
-  const navItems = [
-    { name: "Головна", path: "/" },
-    { name: "Послуги", path: "/services" },
-    { name: "Про нас", path: "/about" },
-    { name: "Команда", path: "/team" },
-    { name: "Контакти", path: "/contact" },
-  ];
-
   return (
-    <div className="min-h-screen bg-[#050505] text-white selection:bg-blue-500/30 selection:text-blue-100">
-      <header className="fixed top-0 left-0 right-0 z-50 px-2 sm:px-4 lg:px-6 pt-[calc(var(--safe-top)+0.625rem)] sm:pt-[calc(var(--safe-top)+0.75rem)]">
+    <div className="min-h-screen bg-[#050505] pb-[calc(4.75rem+var(--safe-bottom))] text-white selection:bg-[#3b6dff]/35 lg:pb-0">
+      <ScrollProgress />
+      <a href="#main-content" className="skip-link">
+        Перейти до вмісту
+      </a>
+
+      <header className="fixed inset-x-0 top-0 z-50 px-2 pt-[calc(var(--safe-top)+0.625rem)] sm:px-4 sm:pt-[calc(var(--safe-top)+0.75rem)] lg:px-6">
         <div
-          className={`mx-auto max-w-7xl rounded-lg sm:rounded-xl border transition-all duration-500 ${
+          className={`mx-auto max-w-7xl rounded-lg border transition-all duration-500 sm:rounded-xl ${
             scrolled
-              ? "border-white/15 bg-[#070a10]/88 backdrop-blur-xl shadow-[0_14px_34px_rgba(0,0,0,0.45)]"
-              : "border-white/10 bg-[#070a10]/72 backdrop-blur-lg shadow-[0_8px_26px_rgba(0,0,0,0.35)]"
+              ? "border-white/20 bg-[#070a10]/95 shadow-[0_14px_34px_rgba(0,0,0,0.45)] backdrop-blur-xl"
+              : "border-white/12 bg-[#070a10]/80 backdrop-blur-lg shadow-[0_8px_26px_rgba(0,0,0,0.35)]"
           }`}
         >
-          <div className="h-[74px] sm:h-[84px] lg:h-[94px] px-3 sm:px-6 lg:px-8 flex items-center justify-between gap-3">
-            <Link to="/" className="group tap-feedback inline-flex items-center gap-2 sm:gap-4 shrink-0 min-w-0 touch-manipulation">
-              <div className="relative h-12 w-12 sm:h-16 sm:w-16 lg:h-20 lg:w-20 rounded-full border border-white/20 bg-[#0d1421] flex items-center justify-center overflow-hidden shadow-[0_6px_14px_rgba(0,0,0,0.45)]">
-                <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent" />
+          <div className="flex h-[74px] items-center justify-between gap-3 px-3 sm:h-[84px] sm:px-6 lg:h-[90px] lg:px-8">
+            <Link
+              to="/"
+              className="group inline-flex min-w-0 shrink-0 touch-manipulation items-center gap-2 sm:gap-3"
+            >
+              <span className="relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-full border border-white/25 bg-[#0d1421] sm:h-14 sm:w-14 lg:h-16 lg:w-16">
                 <img
                   src={logoSrc}
-                  alt={BUSINESS_INFO.brand}
-                  className="h-9 w-9 sm:h-12 sm:w-12 lg:h-16 lg:w-16 rounded-full object-cover group-hover:scale-105 transition-transform"
+                  alt=""
+                  width={64}
+                  height={64}
+                  className="h-10 w-10 rounded-full object-cover transition-transform group-hover:scale-105 sm:h-12 sm:w-12 lg:h-14 lg:w-14"
                 />
-              </div>
-              <div className="leading-none min-w-0">
-                <div className="text-[11px] sm:text-[13px] lg:text-[14px] tracking-[0.16em] sm:tracking-[0.22em] uppercase text-gray-200 font-semibold whitespace-nowrap">
-                  HubService
-                </div>
-                <div className="hidden sm:block text-[9px] lg:text-[10px] tracking-[0.2em] uppercase text-gray-500 mt-1.5 whitespace-nowrap">
-                  Преміальний догляд за авто
-                </div>
-              </div>
+              </span>
+              <span className="min-w-0 leading-none">
+                <span className="block whitespace-nowrap text-[12px] font-semibold uppercase tracking-[0.16em] text-white sm:text-[13px] sm:tracking-[0.2em]">
+                  {BUSINESS_INFO.brand}
+                </span>
+                <span className="mt-1.5 hidden whitespace-nowrap text-[9px] uppercase tracking-[0.2em] text-[#aab3c2] sm:block lg:text-[10px]">
+                  {BUSINESS_INFO.tagline}
+                </span>
+              </span>
             </Link>
 
-            <nav className="hidden md:flex items-center gap-8 lg:gap-10">
-              {navItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`text-[11px] font-semibold tracking-[0.2em] uppercase transition-colors relative group ${
-                    location.pathname === item.path ? "text-white" : "text-gray-400 hover:text-white"
-                  }`}
-                >
-                  {item.name}
-                  <span
-                    className={`absolute -bottom-1 left-0 h-px bg-[#d5b57a] transition-all ${
-                      location.pathname === item.path ? "w-full" : "w-0 group-hover:w-full"
+            <nav aria-label="Основна навігація" className="hidden items-center gap-7 lg:flex xl:gap-9">
+              {navItems.map((item) => {
+                const isActive = location.pathname === item.path;
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    aria-current={isActive ? "page" : undefined}
+                    className={`group relative py-2 text-[11px] font-semibold uppercase tracking-[0.18em] transition-colors ${
+                      isActive ? "text-white" : "text-[#aab3c2] hover:text-white"
                     }`}
-                  />
-                </Link>
-              ))}
+                  >
+                    {item.name}
+                    <span
+                      className={`absolute -bottom-0.5 left-0 h-px bg-[#d5b57a] transition-all ${
+                        isActive ? "w-full" : "w-0 group-hover:w-full"
+                      }`}
+                    />
+                  </Link>
+                );
+              })}
             </nav>
 
-            <div className="hidden md:flex items-center gap-3 shrink-0">
+            <div className="hidden shrink-0 items-center gap-3 md:flex">
+              <a
+                href={`tel:${BUSINESS_INFO.phoneE164}`}
+                className="hidden items-center gap-2 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#c3cad6] transition-colors hover:text-white xl:flex"
+              >
+                <Phone size={14} />
+                {BUSINESS_INFO.phoneDisplay}
+              </a>
               <button
                 type="button"
                 onClick={() => openModal()}
-                className="tap-feedback touch-manipulation rounded-md border border-[#d5b57a]/35 bg-gradient-to-r from-[#1d2b42] to-[#23344f] hover:from-[#24354f] hover:to-[#2a3e5d] px-4 py-2 text-[11px] font-bold tracking-[0.16em] uppercase transition-all"
+                className="touch-manipulation rounded-md border border-[#d5b57a]/45 bg-gradient-to-r from-[#243754] to-[#2c4266] px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.14em] transition-all hover:from-[#2c4266] hover:to-[#35507a]"
               >
                 Записатися
               </button>
@@ -114,11 +123,11 @@ export const Layout = ({ children, openModal }: LayoutProps) => {
 
             <button
               type="button"
-              onClick={() => setIsMenuOpen((v) => !v)}
+              onClick={() => setIsMenuOpen((value) => !value)}
               aria-label={isMenuOpen ? "Закрити меню" : "Відкрити меню"}
               aria-expanded={isMenuOpen}
               aria-controls="mobile-main-menu"
-              className="tap-feedback touch-manipulation md:hidden p-2.5 rounded-md border border-white/10 bg-white/[0.03] text-white/90 hover:text-white hover:border-white/25 transition-colors"
+              className="touch-manipulation rounded-md border border-white/20 bg-white/[0.04] p-2.5 text-white transition-colors hover:border-white/40 lg:hidden"
             >
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -132,70 +141,88 @@ export const Layout = ({ children, openModal }: LayoutProps) => {
             <>
               <motion.button
                 type="button"
-                aria-label="Close menu overlay"
+                aria-label="Закрити меню"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.22 }}
-                className="md:hidden fixed inset-0 z-40 bg-black/72 backdrop-blur-[2px]"
+                transition={{ duration: 0.2 }}
+                className="fixed inset-0 z-40 bg-black/75 backdrop-blur-[2px] lg:hidden"
                 onClick={() => setIsMenuOpen(false)}
               />
 
               <motion.aside
+                ref={menuRef}
                 id="mobile-main-menu"
-                initial={{ x: "100%", opacity: 0.95 }}
-                animate={{ x: 0, opacity: 1 }}
-                exit={{ x: "100%", opacity: 0.95 }}
-                transition={{ type: "spring", stiffness: 280, damping: 30 }}
-                className="md:hidden fixed right-0 top-0 z-50 h-[100svh] w-[88vw] max-w-[390px] border-l border-white/15 bg-[#060a12]/96 backdrop-blur-xl shadow-[-18px_0_50px_rgba(0,0,0,0.55)]"
+                aria-label="Мобільне меню"
+                initial={{ x: "100%" }}
+                animate={{ x: 0 }}
+                exit={{ x: "100%" }}
+                transition={{ type: "spring", stiffness: 300, damping: 32 }}
+                className="fixed right-0 top-0 z-50 h-[100svh] w-[88vw] max-w-[390px] border-l border-white/15 bg-[#060a12]/97 shadow-[-18px_0_50px_rgba(0,0,0,0.55)] backdrop-blur-xl lg:hidden"
               >
-                <div className="h-full flex flex-col">
-                  <div className="px-4 pt-[calc(var(--safe-top)+1rem)] pb-4 border-b border-white/10">
+                <div className="flex h-full flex-col">
+                  <div className="border-b border-white/10 px-4 pb-4 pt-[calc(var(--safe-top)+1rem)]">
                     <div className="flex items-center justify-between gap-3">
-                      <div className="inline-flex items-center gap-3 min-w-0">
-                        <img src={logoSrc} alt={BUSINESS_INFO.brand} className="h-10 w-10 rounded-full border border-white/15 object-cover" />
+                      <div className="inline-flex min-w-0 items-center gap-3">
+                        <img
+                          src={logoSrc}
+                          alt=""
+                          width={40}
+                          height={40}
+                          className="h-10 w-10 rounded-full border border-white/20 object-cover"
+                        />
                         <div className="min-w-0">
-                          <div className="text-[11px] tracking-[0.2em] uppercase text-white font-semibold truncate">HubService</div>
-                          <div className="text-[9px] tracking-[0.18em] uppercase text-gray-400 mt-1 truncate">Premium Auto Care</div>
+                          <div className="truncate text-[12px] font-semibold uppercase tracking-[0.16em] text-white">
+                            {BUSINESS_INFO.brand}
+                          </div>
+                          <div className="mt-1 truncate text-[9px] uppercase tracking-[0.16em] text-[#aab3c2]">
+                            {BUSINESS_INFO.tagline}
+                          </div>
                         </div>
                       </div>
 
                       <button
                         type="button"
-                        aria-label="Close menu"
+                        aria-label="Закрити меню"
                         onClick={() => setIsMenuOpen(false)}
-                        className="tap-feedback touch-manipulation p-2.5 rounded-md border border-white/15 text-white/90 hover:text-white hover:border-white/35 transition-colors"
+                        className="touch-manipulation rounded-md border border-white/20 p-2.5 text-white transition-colors hover:border-white/40"
                       >
-                        <X size={22} />
+                        <X size={20} />
                       </button>
                     </div>
                   </div>
 
-                  <nav className="px-3 py-3 overflow-y-auto flex-1">
-                    {navItems.map((item, index) => (
-                      <Link
-                        key={item.path}
-                        to={item.path}
-                        className={`tap-feedback touch-manipulation group flex items-center justify-between rounded-lg px-3.5 py-4 text-sm font-semibold tracking-[0.12em] uppercase transition-colors ${
-                          location.pathname === item.path
-                            ? "text-[#d5b57a] bg-white/5 border border-[#d5b57a]/25"
-                            : "text-gray-200 hover:text-white hover:bg-white/5 border border-transparent"
-                        }`}
-                      >
-                        <span>{item.name}</span>
-                        <span className="text-[10px] text-gray-500 group-hover:text-[#d5b57a] transition-colors">0{index + 1}</span>
-                      </Link>
-                    ))}
+                  <nav aria-label="Мобільна навігація" className="flex-1 overflow-y-auto px-3 py-3">
+                    {navItems.map((item, index) => {
+                      const isActive = location.pathname === item.path;
+                      return (
+                        <Link
+                          key={item.path}
+                          to={item.path}
+                          aria-current={isActive ? "page" : undefined}
+                          className={`group flex items-center justify-between rounded-lg border px-3.5 py-4 text-sm font-semibold uppercase tracking-[0.1em] transition-colors ${
+                            isActive
+                              ? "border-[#d5b57a]/45 bg-white/5 text-[#f0d9a8]"
+                              : "border-transparent text-[#d7dbe3] hover:bg-white/5 hover:text-white"
+                          }`}
+                        >
+                          <span>{item.name}</span>
+                          <span className="text-[10px] tabular-nums text-[#8b93a3]">
+                            {String(index + 1).padStart(2, "0")}
+                          </span>
+                        </Link>
+                      );
+                    })}
                   </nav>
 
-                  <div className="px-4 pb-[max(var(--safe-bottom),1rem)] pt-3 border-t border-white/10 space-y-3">
+                  <div className="space-y-3 border-t border-white/10 px-4 pb-[max(var(--safe-bottom),1rem)] pt-3">
                     <button
                       type="button"
                       onClick={() => {
-                        openModal();
                         setIsMenuOpen(false);
+                        openModal();
                       }}
-                      className="tap-feedback touch-manipulation w-full rounded-lg border border-[#d5b57a]/35 bg-gradient-to-r from-[#1d2b42] to-[#23344f] px-4 py-4 text-[11px] font-bold tracking-[0.18em] uppercase"
+                      className="w-full touch-manipulation rounded-lg border border-[#d5b57a]/45 bg-gradient-to-r from-[#243754] to-[#2c4266] px-4 py-4 text-[11px] font-bold uppercase tracking-[0.16em]"
                     >
                       Записатися
                     </button>
@@ -203,7 +230,7 @@ export const Layout = ({ children, openModal }: LayoutProps) => {
                     <div className="grid grid-cols-2 gap-2">
                       <a
                         href={`tel:${BUSINESS_INFO.phoneE164}`}
-                        className="tap-feedback touch-manipulation rounded-lg border border-white/10 bg-white/[0.02] px-3 py-3 text-[10px] font-semibold tracking-[0.14em] uppercase text-gray-200 text-center"
+                        className="touch-manipulation rounded-lg border border-white/15 bg-white/[0.03] px-3 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.12em] text-[#e5e9f0]"
                       >
                         Дзвінок
                       </a>
@@ -211,7 +238,7 @@ export const Layout = ({ children, openModal }: LayoutProps) => {
                         href={BUSINESS_INFO.mapsUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="tap-feedback touch-manipulation rounded-lg border border-white/10 bg-white/[0.02] px-3 py-3 text-[10px] font-semibold tracking-[0.14em] uppercase text-gray-200 text-center"
+                        className="touch-manipulation rounded-lg border border-white/15 bg-white/[0.03] px-3 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.12em] text-[#e5e9f0]"
                       >
                         Карта
                       </a>
@@ -224,79 +251,145 @@ export const Layout = ({ children, openModal }: LayoutProps) => {
         </AnimatePresence>
       </header>
 
-      <main>{children}</main>
+      <main id="main-content" tabIndex={-1}>
+        {children}
+      </main>
 
-      <footer className="bg-[#050505] pt-20 sm:pt-24 lg:pt-32 pb-10 sm:pb-12 border-t border-white/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-12 mb-14 sm:mb-16 lg:mb-20">
-            <div className="col-span-1 md:col-span-2">
-              <div className="inline-flex items-center gap-3 sm:gap-4 mb-7 sm:mb-8 rounded-xl border border-white/10 bg-white/[0.02] px-3.5 sm:px-4 py-3">
-                <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-full border border-white/20 bg-[#0d1421] flex items-center justify-center overflow-hidden shadow-[0_6px_14px_rgba(0,0,0,0.45)]">
-                  <img src={logoSrc} alt={BUSINESS_INFO.brand} className="h-9 w-9 sm:h-11 sm:w-11 rounded-full object-cover" />
-                </div>
+      <footer className="border-t border-white/10 bg-[#050505] pb-10 pt-16 sm:pt-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-12 grid grid-cols-1 gap-10 md:grid-cols-4 md:gap-12">
+            <div className="md:col-span-2">
+              <div className="mb-6 inline-flex items-center gap-3 rounded-xl border border-white/12 bg-white/[0.03] px-4 py-3">
+                <img
+                  src={logoSrc}
+                  alt=""
+                  width={56}
+                  height={56}
+                  className="h-12 w-12 rounded-full border border-white/20 object-cover"
+                />
                 <div>
-                  <div className="text-[12px] sm:text-[13px] tracking-[0.18em] sm:tracking-[0.2em] uppercase font-semibold text-white">HubService</div>
-                  <div className="text-[9px] sm:text-[10px] tracking-[0.18em] sm:tracking-[0.2em] uppercase text-[#d5b57a] mt-1">Преміальний догляд за авто Studio</div>
+                  <div className="text-[13px] font-semibold uppercase tracking-[0.18em] text-white">
+                    {BUSINESS_INFO.brand}
+                  </div>
+                  <div className="mt-1 text-[10px] uppercase tracking-[0.18em] text-[#d5b57a]">
+                    {BUSINESS_INFO.tagline}
+                  </div>
                 </div>
               </div>
-              <p className="text-gray-500 max-w-sm mb-7 sm:mb-8 leading-relaxed text-sm sm:text-base">
-                Ми надаємо преміальний сервіс догляду за автомобілем у Горохові.
-                Наша репутація - це якість робіт, прозора комунікація та увага до деталей.
+              <p className="mb-6 max-w-sm text-base leading-relaxed text-[#aab3c2]">
+                Студія догляду за авто у Горохові: мийка, хімчистка, полірування, кондиціонери
+                та 3D розвал-сходження. Працюємо за погодженим кошторисом.
               </p>
-              <div className="flex gap-4">
-                <a aria-label="Instagram HubService" href={BUSINESS_INFO.instagramUrl} target="_blank" rel="noopener noreferrer" className="tap-feedback touch-manipulation w-11 h-11 sm:w-12 sm:h-12 border border-white/10 flex items-center justify-center hover:bg-blue-600 hover:border-blue-600 transition-all group">
-                  <Instagram className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-white" />
-                </a>
-                <a aria-label="Facebook HubService" href={BUSINESS_INFO.facebookUrl} target="_blank" rel="noopener noreferrer" className="tap-feedback touch-manipulation w-11 h-11 sm:w-12 sm:h-12 border border-white/10 flex items-center justify-center hover:bg-blue-600 hover:border-blue-600 transition-all group">
-                  <Facebook className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-white" />
-                </a>
-              </div>
+              <a
+                href={BUSINESS_INFO.mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-md border border-white/20 px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#e5e9f0] transition-colors hover:border-[#d5b57a] hover:text-white"
+              >
+                <MapPin size={15} />
+                Ми на Google Maps
+              </a>
             </div>
 
-            <div>
-              <h4 className="text-white font-bold font-display uppercase tracking-widest mb-6 sm:mb-8">Навігація</h4>
-              <ul className="space-y-4">
+            <nav aria-label="Навігація у підвалі">
+              <h2 className="mb-5 font-display text-sm font-semibold uppercase tracking-[0.16em] text-white">
+                Навігація
+              </h2>
+              <ul className="space-y-3">
                 {navItems.map((item) => (
                   <li key={item.path}>
-                    <Link to={item.path} className="tap-feedback touch-manipulation inline-flex text-gray-500 hover:text-blue-500 transition-colors text-sm uppercase tracking-widest">
+                    <Link
+                      to={item.path}
+                      className="tap-link text-sm text-[#aab3c2] transition-colors hover:text-white"
+                    >
                       {item.name}
                     </Link>
                   </li>
                 ))}
               </ul>
-            </div>
+            </nav>
 
             <div>
-              <h4 className="text-white font-bold font-display uppercase tracking-widest mb-6 sm:mb-8">Контакти</h4>
-              <ul className="space-y-5 sm:space-y-6">
-                <li className="flex items-start gap-4">
-                  <MapPin className="w-5 h-5 text-blue-500 flex-shrink-0" />
-                  <span className="text-gray-500 text-sm leading-relaxed">{BUSINESS_INFO.addressLine},<br />{BUSINESS_INFO.city}, {BUSINESS_INFO.country}</span>
+              <h2 className="mb-5 font-display text-sm font-semibold uppercase tracking-[0.16em] text-white">
+                Контакти
+              </h2>
+              <ul className="space-y-4 text-sm text-[#aab3c2]">
+                <li className="flex items-start gap-3">
+                  <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-[#d5b57a]" />
+                  <span>
+                    {BUSINESS_INFO.addressLine},
+                    <br />
+                    {BUSINESS_INFO.city}, {BUSINESS_INFO.region}
+                  </span>
                 </li>
-                <li className="flex items-center gap-4">
-                  <Phone className="w-5 h-5 text-blue-500 flex-shrink-0" />
-                  <a href={`tel:${BUSINESS_INFO.phoneE164}`} className="tap-feedback touch-manipulation text-gray-500 text-sm hover:text-white transition-colors">{BUSINESS_INFO.phoneDisplay}</a>
+                <li className="flex items-center gap-3">
+                  <Phone className="h-5 w-5 shrink-0 text-[#d5b57a]" />
+                  <a
+                    href={`tel:${BUSINESS_INFO.phoneE164}`}
+                    className="tap-link transition-colors hover:text-white"
+                  >
+                    {BUSINESS_INFO.phoneDisplay}
+                  </a>
                 </li>
-                <li className="flex items-center gap-4">
-                  <Clock className="w-5 h-5 text-blue-500 flex-shrink-0" />
-                  <span className="text-gray-500 text-sm">{BUSINESS_INFO.workingHoursShort}</span>
+                <li className="flex items-center gap-3">
+                  <Mail className="h-5 w-5 shrink-0 text-[#d5b57a]" />
+                  <a
+                    href={`mailto:${BUSINESS_INFO.email}`}
+                    className="tap-link break-all transition-colors hover:text-white"
+                  >
+                    {BUSINESS_INFO.email}
+                  </a>
+                </li>
+                <li className="flex items-center gap-3">
+                  <Clock className="h-5 w-5 shrink-0 text-[#d5b57a]" />
+                  <span>{BUSINESS_INFO.workingHoursShort}</span>
                 </li>
               </ul>
             </div>
           </div>
 
-          <div className="pt-10 sm:pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center md:items-start gap-5 sm:gap-6">
-            <p className="text-gray-600 text-[11px] sm:text-xs uppercase tracking-[0.16em] sm:tracking-widest text-center md:text-left">© {new Date().getFullYear()} {BUSINESS_INFO.legalName}. Усі права захищені.</p>
-            <div className="flex flex-wrap items-center justify-center md:justify-end gap-5 sm:gap-8">
-              <Link to="/privacy" className="tap-feedback touch-manipulation text-gray-600 hover:text-white text-[10px] uppercase tracking-[0.18em] sm:tracking-[0.2em] transition-colors">Політика конфіденційності</Link>
-              <Link to="/terms" className="tap-feedback touch-manipulation text-gray-600 hover:text-white text-[10px] uppercase tracking-[0.18em] sm:tracking-[0.2em] transition-colors">Умови сервісу</Link>
+          <div className="flex flex-col items-center justify-between gap-5 border-t border-white/10 pt-8 md:flex-row md:items-start">
+            <p className="text-center text-xs text-[#8b93a3] md:text-left">
+              © {new Date().getFullYear()} {BUSINESS_INFO.legalName}. Усі права захищені.
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-5 md:justify-end md:gap-8">
+              <Link
+                to="/privacy"
+                className="tap-link text-xs uppercase tracking-[0.14em] text-[#8b93a3] transition-colors hover:text-white"
+              >
+                Політика конфіденційності
+              </Link>
+              <Link
+                to="/terms"
+                className="tap-link text-xs uppercase tracking-[0.14em] text-[#8b93a3] transition-colors hover:text-white"
+              >
+                Умови сервісу
+              </Link>
             </div>
           </div>
         </div>
       </footer>
+
+      <ScrollToTop />
+
+      <aside aria-label="Швидкий запис" className="fixed inset-x-0 bottom-0 z-30 border-t border-white/15 bg-[#080b12]/96 px-3 pb-[calc(var(--safe-bottom)+0.6rem)] pt-2.5 backdrop-blur-xl lg:hidden">
+        <div className="mx-auto flex max-w-md gap-2.5">
+          <button
+            type="button"
+            onClick={() => openModal()}
+            className="flex-1 touch-manipulation rounded-lg bg-[#2f66f5] px-4 py-3.5 text-[11px] font-bold uppercase tracking-[0.14em] text-white"
+          >
+            Записатися
+          </button>
+          <a
+            href={`tel:${BUSINESS_INFO.phoneE164}`}
+            className="flex flex-1 touch-manipulation items-center justify-center gap-2 rounded-lg border border-white/25 px-4 py-3.5 text-[11px] font-bold uppercase tracking-[0.14em] text-white"
+          >
+            <Phone size={15} />
+            Подзвонити
+          </a>
+        </div>
+      </aside>
     </div>
   );
 };
-
-
-

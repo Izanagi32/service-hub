@@ -1,0 +1,17 @@
+name = "hubservice-leads"
+main = "worker.js"
+compatibility_date = "2026-01-01"
+
+[vars]
+ALLOWED_ORIGINS = "https://servicehubmaster.com"
+
+# Секрети (wrangler secret put ...):
+#   TELEGRAM_BOT_TOKEN
+#   TELEGRAM_CHAT_ID
+#   TURNSTILE_SECRET        # необов'язково
+#   CRM_WEBHOOK_URL         # необов'язково
+
+# Rate limit (5 заявок/хв з одного IP) потребує KV:
+# [[kv_namespaces]]
+# binding = "RATE_LIMIT"
+# id = "<your-kv-namespace-id>"

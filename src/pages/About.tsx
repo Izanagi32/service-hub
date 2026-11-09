@@ -1,248 +1,298 @@
-import { motion } from 'motion/react';
-import {
-  Trophy,
-  Star,
-  ShieldCheck,
-  Sparkles,
-  ArrowRight,
-  BadgeCheck,
-  Gauge,
-} from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { SEO } from '../components/SEO';
+import { motion } from "motion/react";
+import { ArrowRight, BadgeCheck, Clock, Gauge, MapPin, ShieldCheck, Sparkles } from "lucide-react";
+import { Link } from "react-router-dom";
+import { SEO } from "../components/SEO";
+import { buildSrcSet } from "../lib/images";
+import { BUSINESS_INFO } from "../siteContent";
 
 const fadeInUp = {
-  initial: { opacity: 0, y: 30 },
+  initial: { opacity: 0, y: 24 },
   whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true },
-  transition: { duration: 0.8, ease: 'easeOut' as const },
+  viewport: { once: true, margin: "-80px" },
+  transition: { duration: 0.6, ease: "easeOut" as const },
 };
+
+const facts = [
+  { icon: <MapPin className="h-4 w-4" />, value: BUSINESS_INFO.city, label: "Де ми працюємо" },
+  { icon: <Clock className="h-4 w-4" />, value: "09–20", label: "Пн–Сб графік" },
+  { icon: <Gauge className="h-4 w-4" />, value: "3D", label: "Розвал-сходження" },
+  { icon: <BadgeCheck className="h-4 w-4" />, value: "6", label: "Послуг у прайсі" },
+];
+
+const standards = [
+  {
+    step: "01",
+    title: "Аудит стану",
+    text: "Фіксуємо початковий стан авто, ризики та цілі по результату.",
+    icon: <Gauge className="h-5 w-5" />,
+  },
+  {
+    step: "02",
+    title: "План робіт",
+    text: "Узгоджуємо сценарій послуг, матеріали, терміни та бюджет.",
+    icon: <Sparkles className="h-5 w-5" />,
+  },
+  {
+    step: "03",
+    title: "Виконання",
+    text: "Роботи ведуться за технологічними картами та перевіреними складами.",
+    icon: <ShieldCheck className="h-5 w-5" />,
+  },
+  {
+    step: "04",
+    title: "Фінальний контроль",
+    text: "Перевірка якості, рекомендації по догляду, видача авто клієнту.",
+    icon: <BadgeCheck className="h-5 w-5" />,
+  },
+];
 
 export const About = () => {
   return (
-    <div className="pt-24 sm:pt-28 md:pt-32 pb-14 sm:pb-16 md:pb-20 bg-[#050505] overflow-hidden">
+    <div className="overflow-hidden bg-[#050505] pb-16 pt-24 sm:pt-28 md:pt-32">
       <SEO
-        title="Про Нас"
-        description="Дізнайтеся більше про HubService - лідера у сфері професійного детейлінгу в Горохові. Наша історія, цінності та безкомпромісний підхід до якості."
-        keywords="про детейлінг студію, історія hubservice, цінності компанії, професійний сервіс авто"
+        title="Про автосервіс у Горохові: підхід і стандарти"
+        description="HubService — автосервіс у Горохові: мийка, хімчистка, полірування, кондиціонери та 3D розвал-сходження. Як ми працюємо, які стандарти й де знаходимося."
+        keywords="про автосервіс HubService, автосервіс Горохів, хімчистка та полірування"
+        breadcrumb={[
+          { name: "Головна", path: "/" },
+          { name: "Про нас", path: "/about" },
+        ]}
         schema={{
-          '@context': 'https://schema.org',
-          '@type': 'AboutPage',
+          "@context": "https://schema.org",
+          "@type": "AboutPage",
           mainEntity: {
-            '@type': 'Organization',
-            name: 'HubService',
-            description: 'Студія професійного догляду за автомобілем у Горохові.',
-            foundingDate: '2014',
-            areaServed: 'Horokhiv, Ukraine',
+            "@type": "AutoBodyShop",
+            name: BUSINESS_INFO.brand,
+            url: BUSINESS_INFO.siteUrl,
+            telephone: BUSINESS_INFO.phoneE164,
+            email: BUSINESS_INFO.email,
+            address: {
+              "@type": "PostalAddress",
+              streetAddress: BUSINESS_INFO.addressLine,
+              addressLocality: BUSINESS_INFO.city,
+              addressRegion: BUSINESS_INFO.region,
+              postalCode: BUSINESS_INFO.postalCode,
+              addressCountry: "UA",
+            },
           },
         }}
       />
 
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16 sm:mb-20 lg:mb-24">
-        <div className="grid grid-cols-1 lg:grid-cols-[1.05fr_0.95fr] gap-10 sm:gap-14 lg:gap-20 items-center">
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
           <motion.div {...fadeInUp}>
-            <span className="inline-flex items-center gap-3 text-blue-400 text-[10px] font-bold tracking-[0.24em] uppercase mb-5 sm:mb-6">
-              <span className="w-8 h-px bg-blue-500/70" />
-              Про Нас
+            <span className="mb-5 inline-flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.24em] text-[#d5b57a]">
+              <span className="h-px w-8 bg-[#d5b57a]/80" aria-hidden="true" />
+              Про нас
             </span>
 
-            <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold font-display text-white mb-6 sm:mb-8 leading-[0.9] tracking-tight">
-              Ми Створюємо <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-gray-500">
-                Досконалість
-              </span>
+            <h1 className="mb-6 font-display text-3xl font-semibold uppercase leading-[0.95] text-white sm:text-5xl lg:text-6xl">
+              Сервіс, де все <span className="text-[#d5b57a]">зрозуміло</span>
             </h1>
 
-            <p className="text-gray-300 text-base sm:text-lg font-light leading-relaxed mb-8 sm:mb-10 max-w-xl">
-              HubService - це не просто детейлінг студія. Це сервісний простір, де дисципліна,
-              технології та увага до деталей перетворюють догляд за авто у прогнозований premium-результат.
+            <p className="mb-5 max-w-xl text-base leading-relaxed text-[#c3cad6] sm:text-lg">
+              HubService — автосервіс у Горохові. Ми беремося за догляд, який можна перевірити:
+              мийка, хімчистка, полірування, кондиціонери та розвал-сходження.
+            </p>
+            <p className="mb-8 max-w-xl text-base leading-relaxed text-[#aab3c2]">
+              Працюємо так, щоб ви розуміли кожен етап: що робимо, скільки це коштує і чому саме
+              так. Без «пакетів нав'язування» і робіт, яких авто не потребує.
             </p>
 
-            <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-5 max-w-xl">
-              {[
-                { value: '10+', label: 'Років досвіду', icon: <Trophy className="w-4 h-4" /> },
-                { value: '5000+', label: 'Задоволених клієнтів', icon: <Star className="w-4 h-4" /> },
-                { value: '100%', label: 'Контроль якості', icon: <BadgeCheck className="w-4 h-4" /> },
-                { value: '24/7', label: 'Підтримка клієнта', icon: <ShieldCheck className="w-4 h-4" /> },
-              ].map((item, index) => (
+            <div className="grid max-w-xl grid-cols-2 gap-3">
+              {facts.map((fact, index) => (
                 <motion.div
-                  key={index}
-                  {...fadeInUp}
-                  transition={{ ...fadeInUp.transition, delay: index * 0.08 }}
-                  className="border border-white/10 bg-white/[0.02] p-4 sm:p-5"
+                  key={fact.label}
+                  initial={{ opacity: 0, y: 14 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.06 }}
+                  className="border border-white/12 bg-white/[0.03] p-4"
                 >
-                  <div className="text-blue-400 mb-2">{item.icon}</div>
-                  <div className="text-2xl sm:text-3xl font-display font-bold text-white mb-1">{item.value}</div>
-                  <div className="text-[10px] sm:text-xs uppercase tracking-[0.18em] text-gray-400">{item.label}</div>
+                  <div className="mb-2 text-[#d5b57a]">{fact.icon}</div>
+                  <div className="font-display text-2xl font-semibold text-white">{fact.value}</div>
+                  <div className="mt-1 text-[11px] uppercase tracking-[0.12em] text-[#aab3c2]">
+                    {fact.label}
+                  </div>
                 </motion.div>
               ))}
             </div>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.96, y: 20 }}
-            whileInView={{ opacity: 1, scale: 1, y: 0 }}
+            initial={{ opacity: 0, scale: 0.97 }}
+            whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.9, ease: 'easeOut' }}
-            className="relative"
+            transition={{ duration: 0.7, ease: "easeOut" }}
+            className="grid grid-cols-2 gap-3"
           >
-            <div className="absolute -top-8 -left-8 w-40 h-40 bg-blue-600/20 blur-[80px]" />
-            <div className="absolute -bottom-8 -right-8 w-44 h-44 bg-blue-500/15 blur-[80px]" />
+            <div className="col-span-2 overflow-hidden border border-white/12">
+              <img
+                src={`${import.meta.env.BASE_URL}hero-bg.jpg`}
+                srcSet={buildSrcSet("hero-bg.jpg", 1195)}
+                sizes="(min-width: 1024px) 50vw, 100vw"
+                alt="Будівля сервісу HubService у Горохові"
+                width={1195}
+                height={850}
+                loading="lazy"
+                decoding="async"
+                className="aspect-[16/10] w-full object-cover"
+              />
+            </div>
 
-            <div className="relative grid grid-cols-2 gap-3 sm:gap-4">
-              <div className="col-span-2 aspect-[16/10] overflow-hidden border border-white/10">
-                <img
-                  src={`${import.meta.env.BASE_URL}hero-bg.jpg`}
-                  alt="HubService location"
-                  className="w-full h-full object-cover"
-                />
-              </div>
+            <div className="overflow-hidden border border-white/12">
+              <img
+                src={`${import.meta.env.BASE_URL}photo-garage.jpg`}
+                srcSet={`${import.meta.env.BASE_URL}photo-garage-800.jpg 800w, ${import.meta.env.BASE_URL}photo-garage-1200.jpg 1200w, ${import.meta.env.BASE_URL}photo-garage.jpg 1554w`}
+                sizes="(min-width: 1024px) 25vw, 50vw"
+                alt="Робочий бокс з підйомником"
+                width={1554}
+                height={772}
+                loading="lazy"
+                decoding="async"
+                className="aspect-[4/3] w-full object-cover transition-transform duration-700 hover:scale-105"
+              />
+            </div>
 
-              <div className="aspect-[4/5] overflow-hidden border border-white/10">
-                <img
-                  src={`${import.meta.env.BASE_URL}photo-garage.jpg`}
-                  alt="HubService location detail"
-                  className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
-                  referrerPolicy="no-referrer"
-                />
-              </div>
-
-              <div className="aspect-[4/5] overflow-hidden border border-white/10">
-                <img
-                  src={`${import.meta.env.BASE_URL}truck-wash.jpg`}
-                  alt="Truck wash service"
-                  className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
-                  referrerPolicy="no-referrer"
-                />
-              </div>
+            <div className="overflow-hidden border border-white/12">
+              <img
+                src={`${import.meta.env.BASE_URL}truck-wash.jpg`}
+                srcSet={buildSrcSet("truck-wash.jpg", 1193)}
+                sizes="(min-width: 1024px) 25vw, 50vw"
+                alt="Вантажна мийка на території сервісу"
+                width={1193}
+                height={819}
+                loading="lazy"
+                decoding="async"
+                className="aspect-[4/3] w-full object-cover transition-transform duration-700 hover:scale-105"
+              />
             </div>
           </motion.div>
         </div>
       </section>
 
-      <section className="py-16 sm:py-20 lg:py-24 border-y border-white/5 bg-white/[0.015] mb-16 sm:mb-20 lg:mb-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div {...fadeInUp} className="text-center max-w-3xl mx-auto mb-10 sm:mb-12 lg:mb-14">
-            <span className="text-blue-400 text-[10px] font-bold tracking-[0.24em] uppercase mb-4 block">Стандарт HubService</span>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold text-white mb-4">Працюємо по системі, а не хаотично</h2>
-            <p className="text-gray-400 text-sm sm:text-base leading-relaxed">
+      <section className="mt-16 border-y border-white/10 bg-[#080808] py-14 sm:mt-20 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <motion.div {...fadeInUp} className="mb-10 max-w-3xl sm:mb-12">
+            <span className="mb-4 block text-[10px] font-bold uppercase tracking-[0.24em] text-[#d5b57a]">
+              Стандарт
+            </span>
+            <h2 className="mb-4 font-display text-3xl font-semibold text-white sm:text-4xl">
+              Працюємо по системі, а не хаотично
+            </h2>
+            <p className="text-base leading-relaxed text-[#aab3c2]">
               Кожен автомобіль проходить чіткий маршрут: від діагностики до фінального контролю.
-              Тому ви отримуєте стабільний результат, а не випадковий ефект.
+              Тому результат стабільний, а не випадковий.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-            {[
-              {
-                step: '01',
-                title: 'Аудит стану',
-                text: 'Фіксуємо початковий стан авто, ризики та цілі по результату.',
-                icon: <Gauge className="w-5 h-5" />,
-              },
-              {
-                step: '02',
-                title: 'План робіт',
-                text: 'Узгоджуємо сценарій послуг, матеріали, терміни та бюджет.',
-                icon: <Sparkles className="w-5 h-5" />,
-              },
-              {
-                step: '03',
-                title: 'Виконання',
-                text: 'Роботи ведуться за картами процесу та перевіреними стандартами.',
-                icon: <ShieldCheck className="w-5 h-5" />,
-              },
-              {
-                step: '04',
-                title: 'Фінальний контроль',
-                text: 'Перевірка якості, рекомендації по догляду, видача авто клієнту.',
-                icon: <BadgeCheck className="w-5 h-5" />,
-              },
-            ].map((item, index) => (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {standards.map((item, index) => (
               <motion.article
                 key={item.step}
-                {...fadeInUp}
-                transition={{ ...fadeInUp.transition, delay: index * 0.08 }}
-                className="border border-white/10 bg-[#080b11] p-5 sm:p-6 group hover:border-blue-500/35 transition-colors"
+                initial={{ opacity: 0, y: 18 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.06, duration: 0.45 }}
+                className="border border-white/12 bg-[#0a0a0a] p-5 transition-colors hover:border-[#d5b57a]/45"
               >
-                <div className="flex items-center justify-between mb-4 sm:mb-5">
-                  <span className="text-3xl sm:text-4xl font-display font-bold text-white/15 group-hover:text-blue-400/30 transition-colors">
+                <div className="mb-5 flex items-center justify-between">
+                  <span className="font-display text-2xl font-semibold text-white/40">
                     {item.step}
                   </span>
-                  <span className="text-blue-400">{item.icon}</span>
+                  <span className="text-[#d5b57a]">{item.icon}</span>
                 </div>
-                <h3 className="text-white font-display font-bold text-lg mb-3">{item.title}</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">{item.text}</p>
+                <h3 className="mb-2 font-display text-lg font-semibold text-white">{item.title}</h3>
+                <p className="text-sm leading-relaxed text-[#aab3c2]">{item.text}</p>
               </motion.article>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16 sm:mb-20 lg:mb-24">
-        <motion.div {...fadeInUp} className="text-center mb-10 sm:mb-12 lg:mb-14">
-          <span className="text-blue-400 text-[10px] font-bold tracking-[0.24em] uppercase mb-4 block">Наші Цінності</span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold font-display text-white">Чому Обирають Нас</h2>
+      <section className="mx-auto mt-16 max-w-7xl px-4 sm:mt-20 sm:px-6 lg:px-8">
+        <motion.div {...fadeInUp} className="mb-10 max-w-2xl">
+          <span className="mb-4 block text-[10px] font-bold uppercase tracking-[0.24em] text-[#d5b57a]">
+            Принципи
+          </span>
+          <h2 className="font-display text-3xl font-semibold text-white sm:text-4xl">
+            Чому нас обирають
+          </h2>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+        <div className="grid gap-4 md:grid-cols-3">
           {[
             {
-              icon: <ShieldCheck className="w-7 h-7" />,
-              title: 'Безкомпромісна Якість',
-              desc: 'Ми не знижуємо планку. Кожен етап робіт проходить перевірку до фінальної видачі авто.',
+              icon: <ShieldCheck className="h-7 w-7" />,
+              title: "Якість без компромісів",
+              desc: "Кожен етап проходить перевірку до фінальної видачі авто. Зауваження — виправляємо.",
             },
             {
-              icon: <Sparkles className="w-7 h-7" />,
-              title: 'Технологічний Підхід',
-              desc: 'Працюємо сучасними матеріалами та методиками, які дають стабільний і прогнозований результат.',
+              icon: <Sparkles className="h-7 w-7" />,
+              title: "Технологічний підхід",
+              desc: "Склади й обладнання підбираємо під матеріал і стан поверхні, а не «що є».",
             },
             {
-              icon: <Star className="w-7 h-7" />,
-              title: 'Повага До Клієнта',
-              desc: 'Прозора комунікація, чіткі терміни та рекомендації після робіт - без зайвих обіцянок.',
+              icon: <BadgeCheck className="h-7 w-7" />,
+              title: "Повага до клієнта",
+              desc: "Прозорий кошторис, чіткі терміни й рекомендації після робіт — без зайвих обіцянок.",
             },
-          ].map((item, i) => (
-            <motion.div
-              key={i}
-              {...fadeInUp}
-              transition={{ ...fadeInUp.transition, delay: i * 0.08 }}
-              className="group p-6 sm:p-8 bg-white/[0.02] border border-white/10 hover:border-blue-500/30 transition-all"
+          ].map((item, index) => (
+            <motion.article
+              key={item.title}
+              initial={{ opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.07, duration: 0.45 }}
+              className="border border-white/12 bg-white/[0.03] p-6"
             >
-              <div className="w-14 h-14 border border-white/10 flex items-center justify-center text-blue-400 mb-6 group-hover:bg-blue-600 group-hover:text-white transition-all">
+              <div className="mb-5 flex h-12 w-12 items-center justify-center border border-[#d5b57a]/35 text-[#d5b57a]">
                 {item.icon}
               </div>
-              <h3 className="text-xl font-bold text-white font-display mb-4">{item.title}</h3>
-              <p className="text-gray-400 text-sm leading-relaxed">{item.desc}</p>
-            </motion.div>
+              <h3 className="mb-2 font-display text-lg font-semibold text-white">{item.title}</h3>
+              <p className="text-sm leading-relaxed text-[#aab3c2]">{item.desc}</p>
+            </motion.article>
           ))}
         </div>
       </section>
 
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="mx-auto mt-16 max-w-7xl px-4 sm:mt-20 sm:px-6 lg:px-8">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="relative overflow-hidden border border-blue-500/30 bg-gradient-to-r from-[#0b1733] via-[#13306b] to-[#1b4db0] p-6 sm:p-10 md:p-14 lg:p-16"
+          transition={{ duration: 0.5 }}
+          className="relative overflow-hidden border border-white/15 bg-[linear-gradient(120deg,#12224a_0%,#1c3a7d_55%,#2453b8_100%)] p-7 sm:p-10 lg:p-12"
         >
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.14),transparent_40%)]" />
-          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10" />
-
-          <div className="relative z-10 text-center">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold font-display text-white mb-5 sm:mb-6">Готові До Трансформації?</h2>
-            <p className="text-blue-100 text-base sm:text-lg mb-8 sm:mb-10 max-w-2xl mx-auto leading-relaxed">
-              Запишіться на консультацію вже сьогодні та отримайте персональний план догляду саме для вашого авто.
-            </p>
-            <Link
-              to="/contact"
-              className="tap-feedback touch-manipulation inline-flex items-center gap-4 px-8 sm:px-10 py-4 sm:py-5 bg-white text-black font-bold text-[11px] sm:text-xs tracking-[0.24em] uppercase hover:bg-gray-200 transition-colors"
-            >
-              Зв'язатися з Нами <ArrowRight size={16} />
-            </Link>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.15),transparent_45%)]" />
+          <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+            <div className="max-w-2xl">
+              <h2 className="mb-3 font-display text-3xl font-semibold text-white sm:text-4xl">
+                Готові до змін?
+              </h2>
+              <p className="text-base leading-relaxed text-[#dbe4f5]">
+                Запишіться на огляд — підкажемо, що дійсно потрібно зробити саме вашому авто.
+              </p>
+            </div>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Link
+                to="/contact"
+                className="inline-flex min-h-12 touch-manipulation items-center justify-center gap-2 bg-white px-6 py-3.5 text-[11px] font-bold uppercase tracking-[0.16em] text-[#0a1022] transition-colors hover:bg-[#e7ecf7]"
+              >
+                Зв'язатися <ArrowRight size={15} />
+              </Link>
+              <a
+                href={`tel:${BUSINESS_INFO.phoneE164}`}
+                className="inline-flex min-h-12 touch-manipulation items-center justify-center border border-white/40 px-6 py-3.5 text-[11px] font-bold uppercase tracking-[0.16em] text-white transition-colors hover:bg-white/10"
+              >
+                {BUSINESS_INFO.phoneDisplay}
+              </a>
+            </div>
           </div>
         </motion.div>
       </section>
     </div>
   );
 };
+
 

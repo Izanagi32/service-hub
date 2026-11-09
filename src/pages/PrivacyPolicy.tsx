@@ -1,93 +1,119 @@
 import { Calendar, Mail, MapPin, Phone, ShieldCheck } from "lucide-react";
 import { SEO } from "../components/SEO";
-import { BUSINESS_INFO } from "../siteContent";
+import { ADDRESS_FULL, BUSINESS_INFO } from "../siteContent";
 
-const POLICY_UPDATED_AT = "6 березня 2026 року";
+const POLICY_UPDATED_AT = "9 листопада 2026 року";
 
 const policySections: Array<{ title: string; body: string }> = [
   {
-    title: "1. Які дані ми збираємо",
-    body: "Через форми на сайті ми можемо отримувати ім'я, номер телефону, email та текст вашого запиту.",
+    title: "1. Хто обробляє ваші дані",
+    body: `Володільцем персональних даних є автосервіс ${BUSINESS_INFO.brand} за адресою ${ADDRESS_FULL}. З питань обробки даних пишіть на ${BUSINESS_INFO.email} або телефонуйте ${BUSINESS_INFO.phoneDisplay}.`,
   },
   {
-    title: "2. Мета обробки",
-    body: "Ми використовуємо дані для зв'язку з вами, запису на послуги, уточнення деталей заявки та покращення сервісу.",
+    title: "2. Які дані ми збираємо",
+    body: "Через форми на сайті ми отримуємо ім'я, номер телефону, електронну пошту, обрану послугу, бажану дату й час візиту та текст вашого повідомлення. Технічно браузер також передає адресу сторінки та дані про пристрій — це потрібно, щоб зрозуміти контекст звернення.",
   },
   {
-    title: "3. Зберігання та захист",
-    body: "Ми вживаємо технічних та організаційних заходів для захисту персональних даних від несанкціонованого доступу.",
+    title: "3. Мета та правові підстави",
+    body: "Дані використовуємо, щоб відповісти на звернення, підтвердити запис, узгодити обсяг і вартість робіт та виконати замовлення. Підстава — ваша згода під час надсилання форми, а також необхідність виконати договір про надання послуг.",
   },
   {
-    title: "4. Передача третім особам",
-    body: "Ми не продаємо персональні дані. Передача можлива лише у випадках, передбачених законодавством України.",
+    title: "4. Файли cookie та аналітика",
+    body: "Аналітика вмикається лише після вашої згоди в банері на сайті: до цього Google Analytics 4 не завантажується. Після згоди він збирає знеособлену статистику відвідувань (переглянуті сторінки, тип пристрою, приблизне місцезнаходження) з увімкненим анонімізуванням IP. Згоду можна відкликати, очистивши дані сайту в браузері. Рекламних cookie сайт не встановлює.",
   },
   {
-    title: "5. Ваші права",
-    body: "Ви можете звернутися щодо уточнення, оновлення або видалення ваших даних за контактами нижче.",
+    title: "5. Передача даних третім особам",
+    body: "Ми не продаємо персональні дані. Заявка може передаватися сервісу-обробнику (наприклад, формі-релею або месенджеру), який використовується для доставки повідомлень, і сервісу веб-аналітики — виключно в межах зазначених цілей. Передача також можлива на вимогу закону.",
+  },
+  {
+    title: "6. Строк зберігання",
+    body: "Дані заявок зберігаємо не довше 24 місяців з моменту останнього звернення, якщо інше не потрібно для виконання замовлення або захисту прав. Після цього видаляємо або знеособлюємо їх.",
+  },
+  {
+    title: "7. Ваші права",
+    body: "Ви можете запросити доступ до своїх даних, виправлення, видалення чи обмеження обробки, а також відкликати згоду. Напишіть на вказану пошту — відповімо протягом 30 днів. Якщо вважаєте, що права порушено, можете звернутися до Уповноваженого Верховної Ради України з прав людини.",
+  },
+  {
+    title: "8. Безпека",
+    body: "Доступ до заявок мають лише працівники, які працюють із записами. Передача даних із сайту відбувається захищеним з'єднанням HTTPS. Ми не зберігаємо дані банківських карток — оплата відбувається на місці або через платіжний термінал.",
+  },
+  {
+    title: "9. Зміни політики",
+    body: "Якщо зміниться перелік даних або способи обробки, оновимо цю сторінку та дату редакції. Актуальна версія завжди доступна за адресою /privacy.",
   },
 ];
 
 export const PrivacyPolicy = () => {
   return (
-    <div className="pt-24 sm:pt-28 md:pt-32 pb-14 sm:pb-16 md:pb-20 bg-[#050505] overflow-hidden">
+    <div className="bg-[#050505] pb-16 pt-24 sm:pt-28 md:pt-32">
       <SEO
-        title="Політика конфіденційності"
-        description="Політика конфіденційності HubService: які дані ми збираємо, як використовуємо та як захищаємо персональну інформацію."
-        keywords="політика конфіденційності, hubservice, персональні дані"
+        title="Політика конфіденційності та cookie"
+        description="Які дані збирає HubService, з якою метою, як довго зберігає та як захищає. Права користувача й контакти для запитів."
+        keywords="політика конфіденційності, персональні дані, HubService"
+        breadcrumb={[{ name: "Головна", path: "/" }, { name: "Політика конфіденційності", path: "/privacy" }]}
       />
 
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[880px] h-[420px] bg-[radial-gradient(circle,rgba(37,99,235,0.14),rgba(0,0,0,0))] blur-[120px] pointer-events-none" />
-
-        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-6 sm:gap-8 lg:gap-10">
-          <aside className="lg:sticky lg:top-28 h-fit border border-white/10 bg-white/[0.02] p-5 sm:p-7 md:p-8 rounded-xl">
-            <span className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.22em] font-bold text-blue-300 mb-5">
-              <ShieldCheck className="w-4 h-4" />
-              Privacy Notice
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:gap-12">
+          <aside className="h-fit border border-white/12 bg-white/[0.03] p-5 sm:p-7 lg:sticky lg:top-28">
+            <span className="mb-5 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[#d5b57a]">
+              <ShieldCheck className="h-4 w-4" />
+              Дані та приватність
             </span>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold font-display text-white leading-[1.02] mb-5 sm:mb-6">Політика конфіденційності</h1>
+            <h1 className="mb-5 font-display text-3xl font-semibold leading-tight text-white sm:text-4xl">
+              Політика конфіденційності
+            </h1>
 
-            <div className="border border-blue-500/30 bg-blue-500/10 px-4 py-3 text-[12px] sm:text-sm text-blue-100 mb-6 inline-flex items-center gap-2">
-              <Calendar className="w-4 h-4" />
-              Останнє оновлення: {POLICY_UPDATED_AT}
-            </div>
-
-            <p className="text-gray-300 text-[13px] sm:text-sm leading-relaxed mb-7 sm:mb-8">
-              Ми цінуємо вашу довіру та прозоро описуємо, які дані обробляємо, з якою метою і як забезпечуємо їх захист.
+            <p className="mb-5 inline-flex items-center gap-2 border border-[#d5b57a]/35 bg-[#d5b57a]/10 px-4 py-2.5 text-sm text-[#f0d9a8]">
+              <Calendar className="h-4 w-4" />
+              Оновлено: {POLICY_UPDATED_AT}
             </p>
 
-            <div className="space-y-3 text-[13px] sm:text-sm">
-              <a href={`mailto:${BUSINESS_INFO.email}`} className="tap-feedback touch-manipulation flex items-center gap-3 border border-white/10 px-4 py-3 text-gray-200 hover:border-blue-400 transition-colors">
-                <Mail className="w-4 h-4 text-blue-300" />
-                {BUSINESS_INFO.email}
+            <p className="mb-7 text-sm leading-relaxed text-[#aab3c2]">
+              Коротко: ми беремо лише ті дані, які потрібні, щоб відповісти на ваш запит і
+              виконати роботу. Не продаємо їх і не використовуємо для спаму.
+            </p>
+
+            <div className="space-y-3 text-sm">
+              <a
+                href={`mailto:${BUSINESS_INFO.email}`}
+                className="flex items-center gap-3 border border-white/12 px-4 py-3 text-[#e5e9f0] transition-colors hover:border-[#d5b57a]/50"
+              >
+                <Mail className="h-4 w-4 text-[#d5b57a]" />
+                <span className="break-all">{BUSINESS_INFO.email}</span>
               </a>
-              <a href={`tel:${BUSINESS_INFO.phoneE164}`} className="tap-feedback touch-manipulation flex items-center gap-3 border border-white/10 px-4 py-3 text-gray-200 hover:border-blue-400 transition-colors">
-                <Phone className="w-4 h-4 text-blue-300" />
+              <a
+                href={`tel:${BUSINESS_INFO.phoneE164}`}
+                className="flex items-center gap-3 border border-white/12 px-4 py-3 text-[#e5e9f0] transition-colors hover:border-[#d5b57a]/50"
+              >
+                <Phone className="h-4 w-4 text-[#d5b57a]" />
                 {BUSINESS_INFO.phoneDisplay}
               </a>
-              <div className="flex items-start gap-3 border border-white/10 px-4 py-3 text-gray-200">
-                <MapPin className="w-4 h-4 mt-0.5 text-blue-300" />
-                <span>{BUSINESS_INFO.addressLine}, {BUSINESS_INFO.city}</span>
-              </div>
+              <p className="flex items-start gap-3 border border-white/12 px-4 py-3 text-[#c3cad6]">
+                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[#d5b57a]" />
+                <span>{ADDRESS_FULL}</span>
+              </p>
             </div>
           </aside>
 
-          <div className="space-y-4">
-            {policySections.map((section, index) => (
-              <article key={index} className="border border-white/10 bg-white/[0.02] p-5 sm:p-6 md:p-7 hover:border-blue-500/40 hover:bg-blue-950/10 transition-all">
-                <h2 className="text-lg sm:text-xl md:text-2xl font-bold font-display text-white mb-3">{section.title}</h2>
-                <p className="text-gray-300 leading-relaxed">{section.body}</p>
+          <div className="space-y-3">
+            {policySections.map((section) => (
+              <article key={section.title} className="border border-white/12 bg-white/[0.03] p-5 sm:p-6">
+                <h2 className="mb-3 font-display text-lg font-semibold text-white sm:text-xl">
+                  {section.title}
+                </h2>
+                <p className="text-[15px] leading-relaxed text-[#c3cad6]">{section.body}</p>
               </article>
             ))}
 
-            <article className="border border-blue-500/35 bg-blue-950/10 p-5 sm:p-6 md:p-7">
-              <h2 className="text-lg sm:text-xl md:text-2xl font-bold font-display text-white mb-4">6. Контакти</h2>
-              <div className="space-y-2 text-gray-200 leading-relaxed">
-                <p>{BUSINESS_INFO.legalName}</p>
-                <p>{BUSINESS_INFO.addressLine}, {BUSINESS_INFO.city}</p>
-                <p>Email: {BUSINESS_INFO.email}</p>
-                <p>Телефон: {BUSINESS_INFO.phoneDisplay}</p>
-              </div>
+            <article className="border border-[#d5b57a]/35 bg-[#d5b57a]/8 p-5 sm:p-6">
+              <h2 className="mb-3 font-display text-lg font-semibold text-white sm:text-xl">
+                10. Контакти для запитів
+              </h2>
+              <p className="text-[15px] leading-relaxed text-[#e7dfcd]">
+                {BUSINESS_INFO.legalName}, {ADDRESS_FULL}. Email: {BUSINESS_INFO.email}. Телефон:{" "}
+                {BUSINESS_INFO.phoneDisplay}.
+              </p>
             </article>
           </div>
         </div>
@@ -95,4 +121,3 @@ export const PrivacyPolicy = () => {
     </div>
   );
 };
-

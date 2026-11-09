@@ -1,253 +1,519 @@
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import {
-  X,
-  CheckCircle2,
-  Sparkles,
-  ShieldCheck,
-  Trophy,
-  Clock3,
-  BadgeCheck,
   ArrowRight,
+  BadgeCheck,
+  CheckCircle2,
   ChevronDown,
+  Clock3,
+  MessageCircle,
+  Phone,
+  ShieldCheck,
+  Sparkles,
+  X,
 } from "lucide-react";
-import { Dispatch, FormEvent, SetStateAction } from "react";
-import { Service } from "../constants";
+import { Dispatch, FormEvent, SetStateAction, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
+import type { BookingFormState } from "../App";
+import { services } from "../constants";
+import { BUSINESS_INFO } from "../siteContent";
+import type { DeliveryResult } from "../lib/submissions";
+import { TIME_SLOTS, formatPhone, isPastSlot, isSunday, maxBookingDate, todayIsoDate } from "../lib/validation";
+import { useFocusTrap, useScrollLock } from "../lib/a11y";
 
 interface BookingModalProps {
   isOpen: boolean;
   onClose: () => void;
-  services: Service[];
-  formData: { name: string; phone: string; service: string };
-  setFormData: Dispatch<SetStateAction<{ name: string; phone: string; service: string }>>;
+  formData: BookingFormState;
+  setFormData: Dispatch<SetStateAction<BookingFormState>>;
   errors: Record<string, string>;
   isSubmitting: boolean;
-  isSuccess: boolean;
+  delivery: DeliveryResult | null;
   submitError?: string;
   handleBookingSubmit: (e: FormEvent) => void;
 }
 
-const trustHighlights: Array<{ icon: typeof ShieldCheck; text: string }> = [
-  { icon: ShieldCheck, text: "Гарантія на всі роботи" },
-  { icon: Trophy, text: "Сертифіковані майстри" },
-  { icon: Sparkles, text: "Преміум матеріали" },
+const trustHighlights = [
+  { icon: ShieldCheck, text: "Прозорий кошторис до старту робіт" },
+  { icon: Sparkles, text: "Професійна автохімія та обладнання" },
+  { icon: Clock3, text: "Підтвердження візиту в робочий час" },
 ];
+
+const inputBase =
+  "w-full rounded-xl bg-[#0a1022] border px-4 py-3.5 text-white text-[16px] leading-[1.2] transition-colors placeholder:text-[#7d8798] focus:outline-none";
+const inputOk = "border-white/20 focus:border-[#8fb0ff] focus:ring-2 focus:ring-[#8fb0ff]/25";
 
 export const BookingModal = ({
   isOpen,
   onClose,
-  services,
   formData,
   setFormData,
   errors,
   isSubmitting,
-  isSuccess,
+  delivery,
   submitError,
   handleBookingSubmit,
 }: BookingModalProps) => {
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const successRef = useRef<HTMLDivElement>(null);
+
+  useScrollLock(isOpen);
+  useFocusTrap(dialogRef, isOpen, onClose);
+
+  useEffect(() => {
+    if (delivery) successRef.current?.focus({ preventScroll: true });
+  }, [delivery]);
+
+  const update = <K extends keyof BookingFormState>(key: K, value: BookingFormState[K]) => {
+    setFormData((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const isWhatsApp = delivery?.channel === "whatsapp";
+
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[100] flex items-start sm:items-center justify-center p-2.5 pb-[calc(var(--safe-bottom)+0.5rem)] sm:p-6 sm:pb-6">
+        <div className="fixed inset-0 z-[100] flex items-start sm:items-center justify-center p-2.5 pb-[calc(var(--safe-bottom)+0.5rem)] sm:p-6">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
+            aria-hidden="true"
             className="absolute inset-0 bg-black/85 backdrop-blur-md"
           />
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 14 }}
+            ref={dialogRef}
+            initial={{ opacity: 0, scale: 0.96, y: 14 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.97, y: 10 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-            className="relative w-full max-w-[1160px] max-h-[calc(100svh-1rem-var(--safe-bottom))] sm:max-h-[calc(100svh-2.5rem-var(--safe-bottom))] overflow-y-auto lg:overflow-hidden rounded-[24px] sm:rounded-[28px] border border-white/12 bg-[#040712]/95 shadow-[0_40px_120px_rgba(0,0,0,0.62)] flex flex-col lg:flex-row"
+            exit={{ opacity: 0, scale: 0.98, y: 10 }}
+            transition={{ duration: 0.28, ease: "easeOut" }}
+            className="relative w-full max-w-[1080px] max-h-[calc(100svh-1rem-var(--safe-bottom))] overflow-y-auto rounded-[22px] sm:rounded-[26px] border border-white/15 bg-[#040712] shadow-[0_40px_120px_rgba(0,0,0,0.62)]"
             role="dialog"
             aria-modal="true"
-            aria-labelledby="booking-modal-title"
+            aria-label="Запис на візит"
           >
             <button
               onClick={onClose}
               type="button"
               aria-label="Закрити форму запису"
-              className="tap-feedback touch-manipulation absolute top-3 right-3 sm:top-5 sm:right-5 z-20 w-10 h-10 sm:w-11 sm:h-11 rounded-lg border border-white/20 bg-black/45 text-white/65 hover:text-white hover:border-white/35 hover:bg-white/10 transition-all flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300/50"
+              className="absolute top-3 right-3 z-20 flex h-11 w-11 items-center justify-center rounded-lg border border-white/25 bg-black/50 text-white/80 transition-colors hover:bg-white/10 hover:text-white"
             >
               <X size={20} />
             </button>
 
-            <aside className="w-full lg:w-[43%] p-5 sm:p-7 md:p-9 lg:p-12 relative overflow-hidden bg-[linear-gradient(160deg,#2963ff_0%,#2148b7_56%,#0f1e4d_100%)]">
-              <div
-                className="absolute inset-0 pointer-events-none opacity-45"
-                style={{
-                  backgroundImage: "radial-gradient(rgba(255,255,255,0.14) 0.8px, transparent 0.8px)",
-                  backgroundSize: "10px 10px",
-                }}
-              />
-              <div className="absolute -top-20 -left-10 w-56 h-56 rounded-full bg-white/12 blur-2xl pointer-events-none" />
-              <div className="absolute -bottom-24 -right-12 w-56 h-56 rounded-full bg-[#d5b57a]/22 blur-2xl pointer-events-none" />
-
-              <div className="relative z-10 h-full flex flex-col">
-                <div className="mb-10">
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl border border-white/25 bg-white/10 flex items-center justify-center mb-5 sm:mb-6 shadow-[0_10px_24px_rgba(0,0,0,0.2)]">
-                    <Sparkles className="text-white w-7 h-7" />
+            <div className="flex flex-col lg:flex-row">
+              <aside className="relative hidden overflow-hidden bg-[linear-gradient(160deg,#24479f_0%,#1b3576_55%,#0d1a3d_100%)] p-5 sm:p-7 lg:block lg:w-[40%] lg:p-10">
+                <div
+                  className="pointer-events-none absolute inset-0 opacity-40"
+                  style={{
+                    backgroundImage:
+                      "radial-gradient(rgba(255,255,255,0.16) 0.8px, transparent 0.8px)",
+                    backgroundSize: "10px 10px",
+                  }}
+                />
+                <div className="relative z-10 flex h-full flex-col">
+                  <div className="mb-8 flex h-12 w-12 items-center justify-center rounded-xl border border-white/25 bg-white/10 sm:h-14 sm:w-14">
+                    <Sparkles className="h-6 w-6 text-white sm:h-7 sm:w-7" />
                   </div>
-                  <h2 id="booking-modal-title" className="text-3xl sm:text-4xl lg:text-5xl font-bold font-display text-white mb-4 leading-[0.95]">
+
+                  <h2
+                    id="booking-modal-title"
+                    className="mb-3 font-display text-3xl font-semibold leading-[1.05] text-white sm:text-4xl"
+                  >
                     Запис на візит
                   </h2>
-                  <p className="text-blue-50/88 text-base leading-relaxed max-w-md">
-                    Оберіть послугу та залиште контакти. Наш менеджер зв'яжеться з вами протягом 15 хвилин для підтвердження деталей.
+                  <p id="booking-modal-description" className="mb-8 max-w-md text-base leading-relaxed text-blue-50">
+                    Оберіть послугу, залиште контакти й зручний час. Ми підтвердимо візит у робочий час.
                   </p>
-                </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-7 sm:mb-9">
-                  <div className="rounded-xl border border-white/22 bg-black/22 backdrop-blur-sm p-3.5">
-                    <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-blue-100/80 mb-1">Відповідь</div>
-                    <div className="text-white text-sm font-semibold">до 15 хв</div>
-                  </div>
-                  <div className="rounded-xl border border-white/22 bg-black/22 backdrop-blur-sm p-3.5">
-                    <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-blue-100/80 mb-1">Графік</div>
-                    <div className="text-white text-sm font-semibold">09:00-20:00</div>
-                  </div>
-                </div>
-
-                <div className="mt-auto space-y-4">
-                  {trustHighlights.map((item) => {
-                    const Icon = item.icon;
-                    return (
-                      <div key={item.text} className="flex items-center gap-3 text-white/90">
-                        <div className="w-9 h-9 rounded-lg border border-white/22 bg-black/25 flex items-center justify-center">
-                          <Icon size={16} className="text-blue-100" />
-                        </div>
-                        <span className="text-[11px] sm:text-[13px] font-semibold uppercase tracking-[0.12em] sm:tracking-[0.14em]">{item.text}</span>
+                  <div className="mb-8 grid grid-cols-2 gap-3">
+                    <div className="rounded-xl border border-white/25 bg-black/25 p-3.5">
+                      <div className="mb-1 text-[10px] font-bold uppercase tracking-[0.16em] text-blue-100">
+                        Графік
                       </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </aside>
-
-            <section className="w-full lg:w-[57%] p-5 sm:p-7 md:p-9 lg:p-12 bg-[#040712] relative">
-              <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top_left,rgba(52,112,255,0.18),transparent_36%)]" />
-
-              {isSuccess ? (
-                <motion.div
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="relative z-10 h-full flex flex-col items-center justify-center text-center"
-                >
-                  <div className="w-24 h-24 rounded-full border border-blue-400/50 bg-blue-500/15 flex items-center justify-center mb-7">
-                    <CheckCircle2 className="w-12 h-12 text-blue-300" />
-                  </div>
-                  <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold font-display text-white mb-4">Дякуємо!</h3>
-                  <p className="text-gray-300 text-base leading-relaxed max-w-md">
-                    Ваш запит успішно відправлено. Менеджер зв'яжеться з вами найближчим часом для підтвердження візиту.
-                  </p>
-                </motion.div>
-              ) : (
-                <form onSubmit={handleBookingSubmit} className="relative z-10 space-y-5 sm:space-y-6">
-                  <div className="space-y-2">
-                    <label htmlFor="booking-service" className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400">
-                      Послуга
-                    </label>
-                    <div className="relative">
-                      <select
-                        id="booking-service"
-                        value={formData.service}
-                        onChange={(e) => {
-                          setFormData({ ...formData, service: e.target.value });
-                        }}
-                        className="w-full rounded-xl bg-[#0a1022]/95 border border-white/15 px-4 py-3.5 sm:py-4 pr-12 text-white text-[16px] sm:text-[16px] md:text-[17px] leading-[1.2] font-medium focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-500/25 transition-colors appearance-none"
+                      <div className="text-sm font-semibold text-white">Пн–Сб 09–20</div>
+                    </div>
+                    <div className="rounded-xl border border-white/25 bg-black/25 p-3.5">
+                      <div className="mb-1 text-[10px] font-bold uppercase tracking-[0.16em] text-blue-100">
+                        Телефон
+                      </div>
+                      <a
+                        href={`tel:${BUSINESS_INFO.phoneE164}`}
+                        className="text-sm font-semibold text-white underline decoration-white/40 underline-offset-4 hover:decoration-white"
                       >
-                        {services.map((service) => (
-                          <option key={service.id} value={service.title} className="bg-[#06080f] text-white">
-                            {service.title}
-                          </option>
-                        ))}
-                      </select>
-                      <ChevronDown className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        {BUSINESS_INFO.phoneDisplay}
+                      </a>
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <label htmlFor="booking-name" className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400">
-                      Ваше ім'я
-                    </label>
-                    <input
-                      id="booking-name"
-                      name="name"
-                      type="text"
-                      autoComplete="name"
-                      required
-                      aria-invalid={Boolean(errors.name)}
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className={`w-full rounded-xl bg-[#0a1022]/95 border px-4 py-3.5 sm:py-4 text-white text-[16px] sm:text-[16px] md:text-[17px] leading-[1.2] focus:outline-none transition-colors placeholder:text-[#4a6096]/90 ${
-                        errors.name ? "border-red-500" : "border-white/15 focus:border-blue-400 focus:ring-2 focus:ring-blue-500/25"
-                      }`}
-                      placeholder="Олександр"
-                    />
-                    {errors.name && <p className="text-red-400 text-xs leading-relaxed">{errors.name}</p>}
+                  <div className="mt-auto space-y-3">
+                    {trustHighlights.map(({ icon: Icon, text }) => (
+                      <div key={text} className="flex items-center gap-3 text-white">
+                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-white/25 bg-black/25">
+                          <Icon size={15} className="text-blue-100" />
+                        </span>
+                        <span className="text-[12px] font-medium tracking-[0.02em]">{text}</span>
+                      </div>
+                    ))}
                   </div>
+                </div>
+              </aside>
 
-                  <div className="space-y-2">
-                    <label htmlFor="booking-phone" className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400">
-                      Телефон
-                    </label>
-                    <input
-                      id="booking-phone"
-                      name="phone"
-                      type="tel"
-                      inputMode="tel"
-                      autoComplete="tel"
-                      required
-                      aria-invalid={Boolean(errors.phone)}
-                      value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className={`w-full rounded-xl bg-[#0a1022]/95 border px-4 py-3.5 sm:py-4 text-[16px] sm:text-[16px] md:text-[17px] text-white leading-[1.2] focus:outline-none transition-colors placeholder:text-[#4a6096]/90 ${
-                        errors.phone ? "border-red-500" : "border-white/15 focus:border-blue-400 focus:ring-2 focus:ring-blue-500/25"
-                      }`}
-                      placeholder="+38 (0__) ___ __ __"
-                    />
-                    {errors.phone && <p className="text-red-400 text-xs leading-relaxed">{errors.phone}</p>}
+              <section className="relative w-full p-5 sm:p-7 lg:w-[60%] lg:p-10">
+                <div className="mb-6 flex items-center gap-3 pr-12 lg:hidden">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/20 bg-white/[0.06]">
+                    <Sparkles className="h-5 w-5 text-[#8fb0ff]" aria-hidden="true" />
+                  </span>
+                  <div>
+                    <h2 className="font-display text-2xl font-semibold leading-none text-white">
+                      Запис на візит
+                    </h2>
+                    <p className="mt-1 text-xs text-[#aab3c2]">Пн–Сб 09:00–20:00</p>
                   </div>
-
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="tap-feedback touch-manipulation group relative overflow-hidden w-full rounded-xl border border-blue-300/20 py-4 md:py-5 bg-gradient-to-r from-[#1e5fff] to-[#2a69f0] text-white font-bold text-[10px] sm:text-[11px] tracking-[0.2em] sm:tracking-[0.28em] uppercase hover:from-[#3470ff] hover:to-[#3c79ff] transition-all flex items-center justify-center gap-3 disabled:opacity-50 shadow-[0_14px_34px_rgba(36,94,255,0.35)]"
+                </div>
+                {delivery ? (
+                  <motion.div
+                    ref={successRef}
+                    tabIndex={-1}
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex h-full flex-col items-center justify-center py-6 text-center outline-none"
                   >
-                    <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/35 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-                    {isSubmitting ? (
-                      <div className="w-5 h-5 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                    <motion.div
+                      initial={{ scale: 0.4, opacity: 0, rotate: -12 }}
+                      animate={{ scale: 1, opacity: 1, rotate: 0 }}
+                      transition={{ type: "spring", stiffness: 260, damping: 18, delay: 0.1 }}
+                      className="mb-6 flex h-20 w-20 items-center justify-center rounded-full border border-emerald-400/40 bg-emerald-500/15"
+                    >
+                      <CheckCircle2 className="h-10 w-10 text-emerald-300" />
+                    </motion.div>
+
+                    {isWhatsApp ? (
+                      <>
+                        <h3 className="mb-3 font-display text-2xl font-semibold text-white sm:text-3xl">
+                          Заявку сформовано
+                        </h3>
+                        <p className="mb-6 max-w-md text-base leading-relaxed text-[#c3cad6]">
+                          Ми відкрили WhatsApp із готовим текстом заявки. Натисніть «Надіслати» в
+                          месенджері — і ми підтвердимо візит.
+                        </p>
+                        <a
+                          href={delivery.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-xl bg-emerald-500 px-6 py-4 text-[11px] font-bold uppercase tracking-[0.2em] text-[#04210f] transition-colors hover:bg-emerald-400 sm:w-auto"
+                        >
+                          <MessageCircle size={17} />
+                          Відкрити WhatsApp
+                        </a>
+                        <p className="mt-5 text-sm text-[#aab3c2]">
+                          Не відкрилося? Зателефонуйте{" "}
+                          <a
+                            href={`tel:${BUSINESS_INFO.phoneE164}`}
+                            className="font-semibold text-white underline decoration-white/40 underline-offset-4"
+                          >
+                            {BUSINESS_INFO.phoneDisplay}
+                          </a>
+                        </p>
+                      </>
                     ) : (
                       <>
-                        Записатися <ArrowRight size={16} />
+                        <h3 className="mb-3 font-display text-2xl font-semibold text-white sm:text-3xl">
+                          Дякуємо!
+                        </h3>
+                        <p className="mb-6 max-w-md text-base leading-relaxed text-[#c3cad6]">
+                          Заявку надіслано. Ми зв'яжемося з вами в робочий час, щоб підтвердити
+                          деталі візиту.
+                        </p>
                       </>
                     )}
-                  </button>
 
-                  <div className="inline-flex items-start gap-2 text-[11px] sm:text-[12px] text-gray-400 leading-relaxed">
-                    <BadgeCheck className="w-4 h-4 text-blue-300 mt-0.5" />
-                    <span>Без прихованих платежів. Узгоджуємо ціну перед стартом робіт.</span>
-                  </div>
+                    <button
+                      type="button"
+                      onClick={onClose}
+                      className="mt-8 text-[11px] font-bold uppercase tracking-[0.22em] text-[#8fb0ff] transition-colors hover:text-white"
+                    >
+                      Повернутися на сайт
+                    </button>
+                  </motion.div>
+                ) : (
+                  <form onSubmit={handleBookingSubmit} noValidate className="space-y-5">
+                    {Object.keys(errors).length > 0 && (
+                      <div
+                        role="alert"
+                        className="rounded-lg border border-red-400/40 bg-red-500/10 px-4 py-3 text-sm leading-relaxed text-red-200"
+                      >
+                        Перевірте, будь ласка, поля: {Object.values(errors).join("; ")}.
+                      </div>
+                    )}
+                    <div>
+                      <label
+                        htmlFor="booking-service"
+                        className="mb-2 block text-[11px] font-bold uppercase tracking-[0.18em] text-[#aab3c2]"
+                      >
+                        Послуга
+                      </label>
+                      <div className="relative">
+                        <select
+                          id="booking-service"
+                          data-autofocus
+                          value={formData.service}
+                          onChange={(e) => update("service", e.target.value)}
+                          className={`${inputBase} ${inputOk} appearance-none pr-12`}
+                        >
+                          {services.map((service) => (
+                            <option key={service.id} value={service.title} className="bg-[#06080f]">
+                              {service.title} — {service.price}
+                            </option>
+                          ))}
+                        </select>
+                        <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#aab3c2]" />
+                      </div>
+                    </div>
 
-                  <div className="inline-flex items-start gap-2 text-[11px] sm:text-[12px] text-gray-400 leading-relaxed">
-                    <Clock3 className="w-4 h-4 text-blue-300 mt-0.5" />
-                    <span>Підтвердження заявки в робочий час до 15 хвилин.</span>
-                  </div>
+                    <div className="grid gap-5 sm:grid-cols-2">
+                      <div>
+                        <label
+                          htmlFor="booking-name"
+                          className="mb-2 block text-[11px] font-bold uppercase tracking-[0.18em] text-[#aab3c2]"
+                        >
+                          Ваше ім'я
+                        </label>
+                        <input
+                          id="booking-name"
+                          name="name"
+                          type="text"
+                          autoComplete="name"
+                          required
+                          aria-invalid={Boolean(errors.name)}
+                          aria-describedby={errors.name ? "booking-name-error" : undefined}
+                          value={formData.name}
+                          onChange={(e) => update("name", e.target.value)}
+                          className={`${inputBase} ${errors.name ? "border-red-400" : inputOk}`}
+                          placeholder="Олександр"
+                        />
+                        {errors.name && (
+                          <p id="booking-name-error" className="mt-2 text-sm text-red-300">
+                            {errors.name}
+                          </p>
+                        )}
+                      </div>
 
-                  {submitError && (
-                    <p className="border border-red-500/40 bg-red-500/10 px-4 py-3 rounded-lg text-red-300 text-sm leading-relaxed">
-                      {submitError}
-                    </p>
-                  )}
-                </form>
-              )}
-            </section>
+                      <div>
+                        <label
+                          htmlFor="booking-phone"
+                          className="mb-2 block text-[11px] font-bold uppercase tracking-[0.18em] text-[#aab3c2]"
+                        >
+                          Телефон
+                        </label>
+                        <input
+                          id="booking-phone"
+                          name="phone"
+                          type="tel"
+                          inputMode="tel"
+                          autoComplete="tel"
+                          required
+                          aria-invalid={Boolean(errors.phone)}
+                          aria-describedby={errors.phone ? "booking-phone-error" : undefined}
+                          value={formData.phone}
+                          onChange={(e) => update("phone", e.target.value)}
+                          onBlur={(e) => update("phone", formatPhone(e.target.value))}
+                          className={`${inputBase} ${errors.phone ? "border-red-400" : inputOk}`}
+                          placeholder="+38 (0XX) XXX-XX-XX"
+                        />
+                        {errors.phone && (
+                          <p id="booking-phone-error" className="mt-2 text-sm text-red-300">
+                            {errors.phone}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="grid gap-5 sm:grid-cols-2">
+                      <div>
+                        <label
+                          htmlFor="booking-date"
+                          className="mb-2 block text-[11px] font-bold uppercase tracking-[0.18em] text-[#aab3c2]"
+                        >
+                          Бажана дата <span className="normal-case tracking-normal text-[#8b93a3]">(необов'язково)</span>
+                        </label>
+                        <input
+                          id="booking-date"
+                          name="date"
+                          type="date"
+                          min={todayIsoDate()}
+                          max={maxBookingDate()}
+                          aria-invalid={Boolean(errors.date)}
+                          aria-describedby={errors.date ? "booking-date-error" : undefined}
+                          value={formData.date}
+                          onChange={(e) => update("date", e.target.value)}
+                          className={`${inputBase} ${errors.date ? "border-red-400" : inputOk} [color-scheme:dark]`}
+                        />
+                        {errors.date && (
+                          <p id="booking-date-error" className="mt-2 text-sm text-red-300">
+                            {errors.date}
+                          </p>
+                        )}
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="booking-time"
+                          className="mb-2 block text-[11px] font-bold uppercase tracking-[0.18em] text-[#aab3c2]"
+                        >
+                          Бажаний час <span className="normal-case tracking-normal text-[#8b93a3]">(необов'язково)</span>
+                        </label>
+                        <div className="relative">
+                          <select
+                            id="booking-time"
+                            value={formData.time}
+                            onChange={(e) => update("time", e.target.value)}
+                            aria-invalid={Boolean(errors.time)}
+                            aria-describedby={errors.time ? "booking-time-error" : undefined}
+                            className={`${inputBase} ${errors.time ? "border-red-400" : inputOk} appearance-none pr-12`}
+                          >
+                            <option value="" className="bg-[#06080f]">
+                              Будь-який час
+                            </option>
+                            {TIME_SLOTS.map((slot) => {
+                              const past = isPastSlot(formData.date, slot);
+                              return (
+                                <option
+                                  key={slot}
+                                  value={slot}
+                                  disabled={past}
+                                  className="bg-[#06080f]"
+                                >
+                                  {past ? `${slot} — уже минув` : slot}
+                                </option>
+                              );
+                            })}
+                          </select>
+                          <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#aab3c2]" />
+                        </div>
+                        {errors.time && (
+                          <p id="booking-time-error" className="mt-2 text-sm text-red-300">
+                            {errors.time}
+                          </p>
+                        )}
+                        {formData.date && isSunday(formData.date) && (
+                          <p className="mt-2 text-xs leading-relaxed text-[#d5b57a]">
+                            Неділя — за попереднім записом. Ми підтвердимо час телефоном.
+                          </p>
+                        )}
+                        {formData.date === todayIsoDate() && (
+                          <p className="mt-2 text-xs leading-relaxed text-[#8b93a3]">
+                            Слоти, що вже минули, недоступні.
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="booking-comment"
+                        className="mb-2 block text-[11px] font-bold uppercase tracking-[0.18em] text-[#aab3c2]"
+                      >
+                        Коментар <span className="normal-case tracking-normal text-[#8b93a3]">(необов'язково)</span>
+                      </label>
+                      <textarea
+                        id="booking-comment"
+                        name="comment"
+                        rows={3}
+                        maxLength={600}
+                        value={formData.comment}
+                        onChange={(e) => update("comment", e.target.value)}
+                        className={`${inputBase} ${inputOk} resize-y`}
+                        placeholder="Марка авто, стан, побажання"
+                      />
+                    </div>
+
+                    <div>
+                      <label htmlFor="booking-consent" className="flex cursor-pointer items-start gap-3 text-sm leading-relaxed text-[#c3cad6]">
+                        <input
+                          id="booking-consent"
+                          name="consent"
+                          type="checkbox"
+                          checked={formData.consent}
+                          onChange={(e) => update("consent", e.target.checked)}
+                          aria-invalid={Boolean(errors.consent)}
+                          aria-describedby={errors.consent ? "booking-consent-error" : undefined}
+                          className="mt-0.5 h-5 w-5 shrink-0 rounded border-white/30 bg-[#0a1022] accent-[#4f7cff]"
+                        />
+                        <span>
+                          Погоджуюся з{" "}
+                          <Link to="/privacy" className="text-white underline decoration-white/40 underline-offset-4 hover:decoration-white">
+                            політикою конфіденційності
+                          </Link>{" "}
+                          і обробкою моїх даних для підтвердження запису.
+                        </span>
+                      </label>
+                      {errors.consent && (
+                        <p id="booking-consent-error" className="mt-2 text-sm text-red-300">
+                          {errors.consent}
+                        </p>
+                      )}
+                    </div>
+
+                    <div aria-hidden="true" className="hidden">
+                      <label htmlFor="booking-website">Website</label>
+                      <input
+                        id="booking-website"
+                        name="website"
+                        type="text"
+                        tabIndex={-1}
+                        autoComplete="off"
+                        value={formData.website}
+                        onChange={(e) => update("website", e.target.value)}
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="btn-shine group flex w-full items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-[#2a63f6] to-[#3a76ff] px-6 py-4 text-[11px] font-bold uppercase tracking-[0.22em] text-white transition-all hover:from-[#3a76ff] hover:to-[#4a86ff] disabled:opacity-60"
+                    >
+                      {isSubmitting ? (
+                        <span className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                      ) : (
+                        <>
+                          Записатися <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+                        </>
+                      )}
+                    </button>
+
+                    {submitError && (
+                      <p role="alert" className="rounded-lg border border-red-400/40 bg-red-500/10 px-4 py-3 text-sm leading-relaxed text-red-200">
+                        {submitError}
+                      </p>
+                    )}
+
+                    <div aria-live="polite" className="space-y-2">
+                      <p className="flex items-start gap-2 text-[12px] leading-relaxed text-[#aab3c2]">
+                        <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#8fb0ff]" />
+                        <span>Без прихованих платежів: ціну погоджуємо перед стартом робіт.</span>
+                      </p>
+                      <p className="flex items-start gap-2 text-[12px] leading-relaxed text-[#aab3c2]">
+                        <Phone className="mt-0.5 h-4 w-4 shrink-0 text-[#8fb0ff]" />
+                        <span>
+                          Потрібна допомога?{" "}
+                          <a
+                            href={`tel:${BUSINESS_INFO.phoneE164}`}
+                            className="font-semibold text-white underline decoration-white/40 underline-offset-4"
+                          >
+                            {BUSINESS_INFO.phoneDisplay}
+                          </a>
+                        </span>
+                      </p>
+                    </div>
+                  </form>
+                )}
+              </section>
+            </div>
           </motion.div>
         </div>
       )}
     </AnimatePresence>
   );
 };
-
