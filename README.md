@@ -64,7 +64,8 @@ npm run dev                    # http://localhost:3000
 ## SEO та домен
 
 - Канонічний домен: `https://servicehubmaster.com` (задається у `VITE_SITE_URL`).
-- `public/CNAME` містить домен для GitHub Pages; якщо хостинг інший — файл можна прибрати.
+- Проєкт публікується в підкаталозі `/service-hub/` — `base` визначається з `GITHUB_REPOSITORY`.
+- Для кастомного домену: додайте `public/CNAME` з доменом і зберіть із `VITE_BASE=/` (наприклад, у CI), інакше ассети будуть шукатися не за тим шляхом.
 - `sitemap.xml` і `robots.txt` вказують на той самий домен.
 - Мета-теги й JSON-LD генеруються компонентом `src/components/SEO.tsx` на кожній сторінці.
 - `index.html` містить статичні meta для соцмереж і пошукових ботів без JS.

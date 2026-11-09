@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",
     "dev:host": "vite --host",
-    "build": "vite build",
+    "build": "vite build && node scripts/generate-route-pages.mjs",
     "preview": "vite preview",
     "clean": "rimraf dist .vite",
     "lint": "npm run check:encoding && npm run lint:types && npm run lint:eslint",
